@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		559216F60DB64B70009F76F7 /* wiggler9x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559216F40DB64B70009F76F7 /* wiggler9x.cpp */; };
+		559216F70DB64B70009F76F7 /* wiggler9x.h in Headers */ = {isa = PBXBuildFile; fileRef = 559216F50DB64B70009F76F7 /* wiggler9x.h */; };
+		559216F80DB64B70009F76F7 /* wiggler9x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559216F40DB64B70009F76F7 /* wiggler9x.cpp */; };
+		559216F90DB64B70009F76F7 /* wiggler9x.h in Headers */ = {isa = PBXBuildFile; fileRef = 559216F50DB64B70009F76F7 /* wiggler9x.h */; };
+		559216FA0DB64B70009F76F7 /* wiggler9x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559216F40DB64B70009F76F7 /* wiggler9x.cpp */; };
+		559216FB0DB64B70009F76F7 /* wiggler9x.h in Headers */ = {isa = PBXBuildFile; fileRef = 559216F50DB64B70009F76F7 /* wiggler9x.h */; };
+		559224340DB65348009F76F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 559224330DB65348009F76F7 /* Python.framework */; };
+		559224350DB65348009F76F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 559224330DB65348009F76F7 /* Python.framework */; };
+		559224360DB65348009F76F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 559224330DB65348009F76F7 /* Python.framework */; };
 		EA00D01E0A5A9956000C58E0 /* logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EA00D01D0A5A9956000C58E0 /* logger.cpp */; };
 		EA00D0200A5A998F000C58E0 /* logger.h in Headers */ = {isa = PBXBuildFile; fileRef = EA00D01F0A5A998F000C58E0 /* logger.h */; };
 		EA058E8A09823A0400F86320 /* mac-hq2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EA058E8909823A0400F86320 /* mac-hq2x.cpp */; };
@@ -692,6 +701,9 @@
 
 /* Begin PBXFileReference section */
 		20286C33FDCF999611CA2CEA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		559216F40DB64B70009F76F7 /* wiggler9x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wiggler9x.cpp; sourceTree = "<group>"; };
+		559216F50DB64B70009F76F7 /* wiggler9x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wiggler9x.h; sourceTree = "<group>"; };
+		559224330DB65348009F76F7 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Python.framework; sourceTree = "<group>"; };
 		EA00D01D0A5A9956000C58E0 /* logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = logger.cpp; sourceTree = "<group>"; };
 		EA00D01F0A5A998F000C58E0 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
 		EA058E8909823A0400F86320 /* mac-hq2x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "mac-hq2x.cpp"; sourceTree = "<group>"; };
@@ -936,6 +948,7 @@
 				EA14D74A085C31BA000B8390 /* IOKit.framework in Frameworks */,
 				EA3D2F620A26085800BDACCC /* libz_u.a in Frameworks */,
 				EA3D2F640A26085800BDACCC /* libHIDUtilities_u.a in Frameworks */,
+				559224340DB65348009F76F7 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -955,6 +968,7 @@
 				EA5723EE092778C100D1DCD8 /* IOKit.framework in Frameworks */,
 				EA3D2F5E0A26085800BDACCC /* libz_u.a in Frameworks */,
 				EA3D2F600A26085800BDACCC /* libHIDUtilities_u.a in Frameworks */,
+				559224350DB65348009F76F7 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -974,6 +988,7 @@
 				EAA3DA26056F245B002B8BB2 /* IOKit.framework in Frameworks */,
 				EA3D2F5B0A26085800BDACCC /* libz.a in Frameworks */,
 				EA3D2F5D0A26085800BDACCC /* libHIDUtilities.a in Frameworks */,
+				559224360DB65348009F76F7 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1011,6 +1026,7 @@
 		20286C32FDCF999611CA2CEA /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				559224330DB65348009F76F7 /* Python.framework */,
 				20286C33FDCF999611CA2CEA /* Carbon.framework */,
 				EA0C95D808364AAE009307B4 /* Foundation.framework */,
 				EA85C2AC0B4ECA8300F5F9C9 /* AppKit.framework */,
@@ -1108,6 +1124,7 @@
 				EAE061E60526CCB900A80003 /* spc7110.h */,
 				EAE061EA0526CCB900A80003 /* srtc.h */,
 				EAE061EC0526CCB900A80003 /* tile.h */,
+				559216F50DB64B70009F76F7 /* wiggler9x.h */,
 				EAE0615B0526CCB900A80003 /* apu.cpp */,
 				EAE0615D0526CCB900A80003 /* apudebug.cpp */,
 				EA2F380F09B17E070078DCA7 /* bsx.cpp */,
@@ -1156,6 +1173,7 @@
 				EAE061E50526CCB900A80003 /* spc7110.cpp */,
 				EAE061E90526CCB900A80003 /* srtc.cpp */,
 				EAE061EB0526CCB900A80003 /* tile.cpp */,
+				559216F40DB64B70009F76F7 /* wiggler9x.cpp */,
 				EAA7B5D807609F76001BAB8B /* jma */,
 				EAE061FD0526CCB900A80003 /* unzip */,
 				EAECB65C04AC7FCD00A80003 /* macosx */,
@@ -1375,6 +1393,7 @@
 				EA14D6E4085C31BA000B8390 /* mac-prefix.h in Headers */,
 				EA14D6E5085C31BA000B8390 /* mac-global_prefix.h in Headers */,
 				EA362C3F086119D200FBE476 /* HID_Utilities_External.h in Headers */,
+				559216F70DB64B70009F76F7 /* wiggler9x.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1480,6 +1499,7 @@
 				EA572384092778C100D1DCD8 /* mac-prefix.h in Headers */,
 				EA572385092778C100D1DCD8 /* mac-global_prefix.h in Headers */,
 				EA572386092778C100D1DCD8 /* HID_Utilities_External.h in Headers */,
+				559216F90DB64B70009F76F7 /* wiggler9x.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1585,6 +1605,7 @@
 				EAA3D9CA056F245B002B8BB2 /* mac-prefix.h in Headers */,
 				EAA3D9CB056F245B002B8BB2 /* mac-global_prefix.h in Headers */,
 				EA362C40086119D200FBE476 /* HID_Utilities_External.h in Headers */,
+				559216FB0DB64B70009F76F7 /* wiggler9x.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1660,9 +1681,11 @@
 		20286C28FDCF999611CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = EA6A1100085808D200A1CF18 /* Build configuration list for PBXProject "Snes9x" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 20286C29FDCF999611CA2CEA /* Snes9x CVS */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				EAA3D981056F245B002B8BB2 /* Snes9x 1.5 */,
 				EA572328092778C100D1DCD8 /* Snes9x 1.5 (gcc 4.0 ppc) */,
@@ -1858,6 +1881,7 @@
 				EA14D73E085C31BA000B8390 /* mac-server.cpp in Sources */,
 				EA14D73F085C31BA000B8390 /* mac-snes9x.cpp in Sources */,
 				EA14D740085C31BA000B8390 /* mac-stringtools.cpp in Sources */,
+				559216F60DB64B70009F76F7 /* wiggler9x.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1948,6 +1972,7 @@
 				EA5723E2092778C100D1DCD8 /* mac-server.cpp in Sources */,
 				EA5723E3092778C100D1DCD8 /* mac-snes9x.cpp in Sources */,
 				EA5723E4092778C100D1DCD8 /* mac-stringtools.cpp in Sources */,
+				559216F80DB64B70009F76F7 /* wiggler9x.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2038,6 +2063,7 @@
 				EA16051F0639E4C0004412AB /* mac-server.cpp in Sources */,
 				EAA3DA1C056F245B002B8BB2 /* mac-snes9x.cpp in Sources */,
 				EAA3DA1D056F245B002B8BB2 /* mac-stringtools.cpp in Sources */,
+				559216FA0DB64B70009F76F7 /* wiggler9x.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2092,6 +2118,11 @@
 			buildSettings = {
 				ARCHS = i386;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -2141,6 +2172,11 @@
 			buildSettings = {
 				ARCHS = i386;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)\"";
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -2194,6 +2230,11 @@
 			buildSettings = {
 				ARCHS = ppc;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -2243,6 +2284,11 @@
 			buildSettings = {
 				ARCHS = ppc;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)\"";
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -2295,6 +2341,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -2349,6 +2400,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)\"";
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;

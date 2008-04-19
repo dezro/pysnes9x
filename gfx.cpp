@@ -170,6 +170,7 @@
 #include "controls.h"
 #include "screenshot.h"
 #include "cheats.h"
+#include "wiggler9x.h"
 #include "movie.h"
 
 #include "font.h"
@@ -495,6 +496,7 @@ void S9xEndScreenRefresh() {
         S9xControlEOF();
     }
     S9xApplyCheats();
+    Wiggler_Refresh();
 #ifdef DEBUGGER
     if(CPU.Flags & FRAME_ADVANCE_FLAG) {
         if(ICPU.FrameAdvanceCount) {

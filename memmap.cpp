@@ -191,6 +191,7 @@
 #include "bsx.h"
 #include "reader.h"
 #include "cheats.h"
+#include "wiggler9x.h"
 #include "controls.h"
 #include "movie.h"
 
@@ -909,6 +910,8 @@ again:
 
 	if (!Settings.NoPatch)
 		CheckForIPSPatch(filename, HeaderCount != 0, totalFileSize);
+	
+    Wiggler_CheckForPyScript(filename);
 
 	int	hi_score, lo_score;
 

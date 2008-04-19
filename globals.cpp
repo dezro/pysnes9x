@@ -174,6 +174,7 @@
 #include "gfx.h"
 #include "soundux.h"
 #include "cheats.h"
+#include "wiggler9x.h"
 #include "sa1.h"
 #include "bsx.h"
 #include "spc7110.h"
@@ -291,6 +292,8 @@ uint32 current_graphic_format = RGB565;
 
 uint8 GetBank = 0;
 struct SCheatData Cheat;
+
+struct SWigglerContext WigglerContext = {0};
 
 volatile SoundStatus so;
 
