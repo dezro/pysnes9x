@@ -16,6 +16,9 @@
 		559224340DB65348009F76F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 559224330DB65348009F76F7 /* Python.framework */; };
 		559224350DB65348009F76F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 559224330DB65348009F76F7 /* Python.framework */; };
 		559224360DB65348009F76F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 559224330DB65348009F76F7 /* Python.framework */; };
+		55A4BE850DBB772100F3F58D /* wiggler9x_py.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A4BE840DBB772100F3F58D /* wiggler9x_py.cpp */; };
+		55A4BE860DBB772100F3F58D /* wiggler9x_py.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A4BE840DBB772100F3F58D /* wiggler9x_py.cpp */; };
+		55A4BE870DBB772100F3F58D /* wiggler9x_py.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A4BE840DBB772100F3F58D /* wiggler9x_py.cpp */; };
 		EA00D01E0A5A9956000C58E0 /* logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EA00D01D0A5A9956000C58E0 /* logger.cpp */; };
 		EA00D0200A5A998F000C58E0 /* logger.h in Headers */ = {isa = PBXBuildFile; fileRef = EA00D01F0A5A998F000C58E0 /* logger.h */; };
 		EA058E8A09823A0400F86320 /* mac-hq2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EA058E8909823A0400F86320 /* mac-hq2x.cpp */; };
@@ -704,6 +707,7 @@
 		559216F40DB64B70009F76F7 /* wiggler9x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wiggler9x.cpp; sourceTree = "<group>"; };
 		559216F50DB64B70009F76F7 /* wiggler9x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wiggler9x.h; sourceTree = "<group>"; };
 		559224330DB65348009F76F7 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Python.framework; sourceTree = "<group>"; };
+		55A4BE840DBB772100F3F58D /* wiggler9x_py.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wiggler9x_py.cpp; sourceTree = "<group>"; };
 		EA00D01D0A5A9956000C58E0 /* logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = logger.cpp; sourceTree = "<group>"; };
 		EA00D01F0A5A998F000C58E0 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
 		EA058E8909823A0400F86320 /* mac-hq2x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "mac-hq2x.cpp"; sourceTree = "<group>"; };
@@ -1174,6 +1178,7 @@
 				EAE061E90526CCB900A80003 /* srtc.cpp */,
 				EAE061EB0526CCB900A80003 /* tile.cpp */,
 				559216F40DB64B70009F76F7 /* wiggler9x.cpp */,
+				55A4BE840DBB772100F3F58D /* wiggler9x_py.cpp */,
 				EAA7B5D807609F76001BAB8B /* jma */,
 				EAE061FD0526CCB900A80003 /* unzip */,
 				EAECB65C04AC7FCD00A80003 /* macosx */,
@@ -1882,6 +1887,7 @@
 				EA14D73F085C31BA000B8390 /* mac-snes9x.cpp in Sources */,
 				EA14D740085C31BA000B8390 /* mac-stringtools.cpp in Sources */,
 				559216F60DB64B70009F76F7 /* wiggler9x.cpp in Sources */,
+				55A4BE850DBB772100F3F58D /* wiggler9x_py.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1973,6 +1979,7 @@
 				EA5723E3092778C100D1DCD8 /* mac-snes9x.cpp in Sources */,
 				EA5723E4092778C100D1DCD8 /* mac-stringtools.cpp in Sources */,
 				559216F80DB64B70009F76F7 /* wiggler9x.cpp in Sources */,
+				55A4BE860DBB772100F3F58D /* wiggler9x_py.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2064,6 +2071,7 @@
 				EAA3DA1C056F245B002B8BB2 /* mac-snes9x.cpp in Sources */,
 				EAA3DA1D056F245B002B8BB2 /* mac-stringtools.cpp in Sources */,
 				559216FA0DB64B70009F76F7 /* wiggler9x.cpp in Sources */,
+				55A4BE870DBB772100F3F58D /* wiggler9x_py.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

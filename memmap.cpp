@@ -517,6 +517,9 @@ bool8 CMemory::Init (void)
 
 void CMemory::Deinit (void)
 {
+    // I couldn't think of a good place to put this, but...
+    Wiggler_Unload();
+    
 	// XXX: Please remove port specific codes
 #ifdef __W32_HEAP
 	if (_HEAPOK! = _heapchk())

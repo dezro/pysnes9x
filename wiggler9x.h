@@ -1,10 +1,14 @@
 #ifndef _WIGGLER_H_
 #define _WIGGLER_H_
 
+#ifdef HAVE_STDINT_H
+# undef HAVE_STDINT_H //rid myself of an annoying warning
+#endif
+
 #ifdef __MACOSX__
-#include <Python/Python.h>
+# include <Python/Python.h>
 #else
-#include <Python.h>
+# include <Python.h>
 #endif
 
 struct SWigglerContext {
