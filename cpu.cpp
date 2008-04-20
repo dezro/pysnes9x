@@ -171,6 +171,7 @@
 #include "dma.h"
 #include "sa1.h"
 #include "cheats.h"
+#include "wiggler9x.h"
 #include "srtc.h"
 #include "sdd1.h"
 #include "spc7110.h"
@@ -284,6 +285,8 @@ void S9xReset (void)
 {
     ResetLogger();
     S9xResetSaveTimer (FALSE);
+    
+    Wiggler_HardReset();
 
     ZeroMemory (Memory.FillRAM, 0x8000);
     memset (Memory.VRAM, 0x00, 0x10000);
@@ -319,6 +322,8 @@ void S9xReset (void)
 void S9xSoftReset (void)
 {
     S9xResetSaveTimer (FALSE);
+    
+    Wiggler_SoftReset();
 
 	if (Settings.BS)
 		S9xResetBSX();

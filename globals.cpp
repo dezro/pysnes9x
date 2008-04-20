@@ -293,7 +293,7 @@ uint32 current_graphic_format = RGB565;
 uint8 GetBank = 0;
 struct SCheatData Cheat;
 
-struct SWigglerContext WigglerContext = {0};
+struct SWigglerContext WigglerContext = {false};
 
 volatile SoundStatus so;
 

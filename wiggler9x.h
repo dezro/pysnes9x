@@ -8,6 +8,8 @@
 #endif
 
 struct SWigglerContext {
+    bool loaded;
+    char* filename;
     PyObject* refreshCallback;
     // todo: screen objects
     //       click/touch callback
@@ -17,7 +19,8 @@ struct SWigglerContext {
 extern struct SWigglerContext WigglerContext;
 void Wiggler_CheckForPyScript(const char *rom_filename);
 void Wiggler_Refresh();
-void Wiggler_Restart(); //TODO: place this
-void Wiggler_Unload(); //TODO: place this
+void Wiggler_HardReset();
+void Wiggler_SoftReset();
+void Wiggler_Unload();  //todo: put this in some kind of "unloading the ROM" and/or "quitting" function.
 
 #endif

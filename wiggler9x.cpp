@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdio.h>
+
 #include "wiggler9x.h"
 #include "snes9x.h"
 #include "memmap.h"
@@ -7,9 +10,18 @@
 PyMODINIT_FUNC initwiggler(void);
 
 void Wiggler_PyInit() {
-    //WigglerContext = {0}; // todo: something like this.
     Py_Initialize();
     initwiggler();
+    
+    FILE* pyscript_file  = NULL;
+    if ((pyscript_file = fopen(WigglerContext.filename, "r")))
+    {
+        printf ("Using Python script %s\n", WigglerContext.filename);
+        PyRun_AnyFile(pyscript_file, WigglerContext.filename);
+        fclose(pyscript_file);
+    }
+    
+    WigglerContext.loaded = true;
 }
 
 void Wiggler_CheckForPyScript(const char *rom_filename) {
@@ -18,18 +30,12 @@ void Wiggler_CheckForPyScript(const char *rom_filename) {
     char   name [_MAX_FNAME + 1];
     char   ext [_MAX_EXT + 1];
     char   fname [_MAX_PATH + 1];
-    FILE* pyscript_file  = NULL;
-    
-    Wiggler_PyInit();
     
     _splitpath (rom_filename, drive, dir, name, ext);
     _makepath (fname, drive, dir, name, "py");
-    if ((pyscript_file = fopen(fname, "r")))
-    {
-        printf ("Using Python script %s\n", fname);
-        PyRun_AnyFile(pyscript_file, fname);
-        fclose(pyscript_file);
-    }
+    
+    WigglerContext.filename = (char*)malloc(strlen(fname)+1);
+    strcpy(WigglerContext.filename, fname);
 }
 
 void Wiggler_Refresh() {
@@ -38,16 +44,31 @@ void Wiggler_Refresh() {
     PyObject_CallObject(WigglerContext.refreshCallback, NULL);
 }
 
-void Wiggler_Restart() {
-    Wiggler_Unload();
-    //todo: get the proper rom name
-    Wiggler_CheckForPyScript("wiggler.smc");
+void Wiggler_DecRefContext() {
+    Py_XDECREF(WigglerContext.refreshCallback);
+}
+
+void Wiggler_Finalize() {
+    Wiggler_DecRefContext();
+    Py_Finalize();
+}
+
+void Wiggler_HardReset() {
+    if (WigglerContext.loaded)
+        Wiggler_Finalize();
+    
+    Wiggler_PyInit();
+}
+
+void Wiggler_SoftReset() {
+    // todo: See if our script wants to handle resetting instead.
+    Wiggler_DecRefContext();
+    Wiggler_PyInit();
 }
 
 void Wiggler_Unload() {
-    Py_XDECREF(WigglerContext.refreshCallback); // Probably unnecessary what with the finalize...
-    Py_Finalize();
-    //todo: collect garbage
+    free(WigglerContext.filename);
+    Wiggler_Finalize();
 }
 
 static PyObject*
