@@ -1,7 +1,8 @@
 #import "wiggler9x.h"
 #import "snes9x.h"
-#include "memmap.h"
-#include "controls.h"
+#include "memmap.h" // peek, poke
+#include "controls.h" // poll
+#include "display.h" // inform
 
 // wiggler.register_refresh(callable)
 // Registers the passed callable, so we may call it at screen refresh.
@@ -200,9 +201,26 @@ wpy_poll_mouse(PyObject *self, PyObject *args) {
     return Py_BuildValue("hh", x, y);
 }
 
+// wiggler.inform displays the passed string
+static PyObject*
+wpy_inform(PyObject *self, PyObject *args) {
+    char *string = NULL;
+    if (!PyArg_ParseTuple(args, "|z", &string)) {
+        PyErr_SetString(PyExc_TypeError, "inform expects a plain ascii string");
+        return NULL;
+    }
+    
+    if (string)
+        S9xSetInfoString(string);
+    else
+        S9xSetInfoString("");
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef mod_wiggler[] = {
     {"register_refresh", wpy_register_refresh, METH_VARARGS,
      "register_refresh(callback)\nRegister a callback to be run at screen refresh."},
+    
     {"peek", wpy_peek, METH_VARARGS,
      "peek(address) -> byte\nPeek at an unsigned byte in memory."},
     {"poke", wpy_poke, METH_VARARGS,
@@ -219,10 +237,14 @@ static PyMethodDef mod_wiggler[] = {
      "peek_signed_word(address) -> byte\nPeek at a signed word in memory."},
     {"poke_signed_word", wpy_poke_signed_word, METH_VARARGS,
      "poke_signed_word(address, value)\nPoke a signed word into memory."},
+    
     {"poll", wpy_poll, METH_VARARGS,
      "poll(player) -> buttons\nPoll the player's controller."},
     {"poll_mouse", wpy_poll_mouse, METH_VARARGS,
      "poll_mouse(player) -> (x,y)\nPoll the player's mouse."},
+    
+    {"inform", wpy_inform, METH_VARARGS,
+     "inform(string)\nDisplays the string."},
     {NULL,NULL,0,NULL}
 };
 
