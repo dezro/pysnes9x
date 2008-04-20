@@ -168,19 +168,22 @@ wpy_poke_signed_word(PyObject *self, PyObject *args) {
 uint16 MovieGetJoypad(int i);
 static PyObject*
 wpy_poll(PyObject *self, PyObject *args) {
-    int player;
+    uint player;
     if (!PyArg_ParseTuple(args, "I", &player)) {
         PyErr_SetString(PyExc_TypeError, "poll expects a player number");
         return NULL;
     }
-    
+    if (player > 7) {
+        PyErr_SetString(PyExc_ValueError, "poll expects a player number from 0 to 7");
+        return NULL;
+    }
     return Py_BuildValue("I", MovieGetJoypad(player));
 }
 
 // wiggler.poll_mouse returns the current x and y location of the mouse
 static PyObject*
 wpy_poll_mouse(PyObject *self, PyObject *args) {
-    int player;
+    uint player;
     uint32 id;
     int16 x, y;
     
