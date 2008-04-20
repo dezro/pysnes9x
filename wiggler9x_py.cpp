@@ -121,20 +121,32 @@ wpy_poke(PyObject *self, PyObject *args) {
         return NULL;
     }
     
-    S9xSetByteFree(byte, address);
+    int block = ((address&0xffffff) >> MEMMAP_SHIFT);
+    uint8 *ptr = Memory.Map [block];
+
+    if (ptr >= (uint8 *) CMemory::MAP_LAST)
+	    *(ptr + (address & 0xffff)) = byte;
+    else
+        S9xSetByteFree(byte, address);
     Py_RETURN_NONE;
 }
 
 static PyObject*
 wpy_poke_word(PyObject *self, PyObject *args) {
     uint32 address;
-    uint8 byte;
-    if (!PyArg_ParseTuple(args, "IH", &address, &byte)) {
+    uint16 word;
+    if (!PyArg_ParseTuple(args, "IH", &address, &word)) {
         PyErr_SetString(PyExc_TypeError, "poke_word expects an address, followed by a word value");
         return NULL;
     }
     
-    S9xSetWordFree(byte, address);
+    int block = ((address&0xffffff) >> MEMMAP_SHIFT);
+    uint16 *ptr = (uint16*)Memory.Map [block];
+
+    if (ptr >= (uint16 *) CMemory::MAP_LAST)
+	    *(ptr + (address & 0xffff)) = word;
+    else
+        S9xSetWordFree(word, address);
     Py_RETURN_NONE;
 }
 
@@ -147,20 +159,32 @@ wpy_poke_signed(PyObject *self, PyObject *args) {
         return NULL;
     }
     
-    S9xSetByteFree(byte, address);
+    int block = ((address&0xffffff) >> MEMMAP_SHIFT);
+    uint8 *ptr = Memory.Map [block];
+
+    if (ptr >= (uint8 *) CMemory::MAP_LAST)
+	    *(ptr + (address & 0xffff)) = byte;
+    else
+        S9xSetByteFree(byte, address);
     Py_RETURN_NONE;
 }
 
 static PyObject*
 wpy_poke_signed_word(PyObject *self, PyObject *args) {
     uint32 address;
-    uint8 byte;
-    if (!PyArg_ParseTuple(args, "Ih", &address, &byte)) {
+    uint8 word;
+    if (!PyArg_ParseTuple(args, "Ih", &address, &word)) {
         PyErr_SetString(PyExc_TypeError, "poke_signed_word expects an address, followed by a signed word value");
         return NULL;
     }
     
-    S9xSetWordFree(byte, address);
+    int block = ((address&0xffffff) >> MEMMAP_SHIFT);
+    uint16 *ptr = (uint16*)Memory.Map [block];
+
+    if (ptr >= (uint16 *) CMemory::MAP_LAST)
+	    *(ptr + (address & 0xffff)) = word;
+    else
+        S9xSetWordFree(word, address);
     Py_RETURN_NONE;
 }
 
@@ -180,28 +204,37 @@ wpy_poll(PyObject *self, PyObject *args) {
     return Py_BuildValue("I", MovieGetJoypad(player));
 }
 
-// wiggler.poll_mouse returns the current x and y location of the mouse
+// wiggler.poll_mouse returns the current x and y location of the mouse as well as the button state
+// only the left button is supported (for possibly misguided compatibility reasons)
+// I mean, don't want to leave the touch-screen and Mac users in the dark
 static PyObject*
 wpy_poll_mouse(PyObject *self, PyObject *args) {
-    uint player;
-    uint32 id;
+    uint player = 0;
+    uint32 pid = 0x82200000;
+    uint32 bid = 0x82100000;
     int16 x, y;
+    bool pressed;
     
-    if (!PyArg_ParseTuple(args, "I", &player)) {
+    if (!PyArg_ParseTuple(args, "|I", &player)) {
         PyErr_SetString(PyExc_TypeError, "poll_mouse expects a player number");
         return NULL;
     }
-    if (player == 0)
-        id = 0x82200100; // ID of player 1 mouse
-    else if (player == 1)
-        id = 0x82200200; // p2
+    if (player == 0) {
+        pid += 0x100; // ID of player 1 mouse
+        bid += 0x100;
+    }
+    else if (player == 1) {
+        pid += 0x200; // p2
+        bid += 0x200;
+    }
     else {
         PyErr_SetString(PyExc_ValueError, "poll_mouse expects a player number of 0 or 1");
         return NULL;
     }
     
-    S9xPollPointer(id, &x, &y);
-    return Py_BuildValue("hh", x, y);
+    S9xPollPointer(pid, &x, &y);
+    S9xPollButton(bid, &pressed);
+    return Py_BuildValue("hhB", x, y, pressed);
 }
 
 // wiggler.inform displays the passed string
