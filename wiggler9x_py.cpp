@@ -5,6 +5,7 @@
 #include "memmap.h" // peek, poke
 #include "controls.h" // poll
 #include "display.h" // inform
+#include "65c816.h" // registerhack
 
 // wiggler.register_refresh(callable)
 // Registers the passed callable, so we may call it at screen refresh.
@@ -286,6 +287,48 @@ wpy_inform(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+// Jump to an arbitrary address.
+static PyObject*
+wpy_jump(PyObject *self, PyObject *args) {
+    uint32 address;
+    if (!PyArg_ParseTuple(args, "I", &address)) {
+        PyErr_SetString(PyExc_TypeError, "jump expects an address");
+        return NULL;
+    }
+    
+    Registers.PCw = address & 0xFFFF;
+    Registers.PB = address >> 16;
+    Py_RETURN_NONE;
+}
+
+// Return from subroutine
+static PyObject*
+wpy_short_return(PyObject *self, PyObject *args) {
+    //AddCycles(TWO_CYCLES);
+    Registers.SL++;
+	Registers.PCw = S9xGetWord(Registers.S.W, WRAP_PAGE);
+	Registers.SL++;
+    //AddCycles(ONE_CYCLE);
+    Registers.PCw++;
+    S9xSetPCBase (Registers.PBPC);
+    
+    Py_RETURN_NONE;
+}
+
+// Return from 16-bit subroutine
+static PyObject*
+wpy_long_return(PyObject *self, PyObject *args) {
+    //AddCycles(TWO_CYCLES);
+    Registers.PCw = S9xGetWord(Registers.S.W + 1, WRAP_BANK);
+	Registers.S.W += 2;
+    Registers.PB = S9xGetByte(++Registers.S.W);
+    Registers.SH = 1;
+    Registers.PCw++;
+    S9xSetPCBase(Registers.PBPC);
+    
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef mod_wiggler[] = {
     {"register_refresh", wpy_register_refresh, METH_VARARGS,
      "register_refresh(callback)\nRegister a callback to be run at screen refresh."},
@@ -316,6 +359,13 @@ static PyMethodDef mod_wiggler[] = {
     
     {"inform", wpy_inform, METH_VARARGS,
      "inform(string)\nDisplays the string."},
+    
+    {"jump", wpy_jump, METH_VARARGS,
+     "jump(address)\nJumps to an arbitrary address."},
+    {"short_return", wpy_short_return, METH_NOARGS,
+     "short_return()\nReturns from a subroutine."},
+    {"long_return", wpy_long_return, METH_NOARGS,
+     "long_return()\nReturns from a 16-bit subroutine."},
     {NULL,NULL,0,NULL}
 };
 
