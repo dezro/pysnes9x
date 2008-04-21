@@ -11,6 +11,11 @@
 # include <Python.h>
 #endif
 
+struct STrap {
+    unsigned int address;
+    PyObject* callback;
+};
+
 struct SWigglerContext {
     bool loaded;
     char* filename;
@@ -23,6 +28,7 @@ struct SWigglerContext {
 extern struct SWigglerContext WigglerContext;
 void Wiggler_CheckForPyScript(const char *rom_filename);
 void Wiggler_Refresh();
+void Wiggler_Trap(unsigned int address);
 void Wiggler_HardReset();
 void Wiggler_SoftReset();
 void Wiggler_Unload();  //todo: put this in some kind of "unloading the ROM" and/or "quitting" function.

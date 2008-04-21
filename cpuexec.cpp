@@ -167,6 +167,7 @@
 #include "ppu.h"
 #include "cpuexec.h"
 #include "debug.h"
+#include "wiggler9x.h"
 #include "snapshot.h"
 #include "gfx.h"
 #include "missing.h"
@@ -272,6 +273,8 @@ void S9xMainLoop (void)
 			}
 #endif
 		}
+		
+        Wiggler_Trap(Registers.PCw + (Registers.PB << 16));
 
 #ifdef CPU_SHUTDOWN
 		CPU.PBPCAtOpcodeStart = Registers.PBPC;

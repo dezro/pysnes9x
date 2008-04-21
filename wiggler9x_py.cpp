@@ -1,5 +1,7 @@
-#import "wiggler9x.h"
-#import "snes9x.h"
+#include "wiggler9x.h"
+#include <list>
+
+#include "snes9x.h"
 #include "memmap.h" // peek, poke
 #include "controls.h" // poll
 #include "display.h" // inform
@@ -24,6 +26,37 @@ wpy_register_refresh(PyObject *self, PyObject *args) {
     Py_CLEAR(WigglerContext.refreshCallback);
     WigglerContext.refreshCallback = hook;
     Py_INCREF(WigglerContext.refreshCallback);
+    Py_RETURN_NONE;
+}
+
+// wiggler.register_trap(address, callable)
+// Registers the passed callable and calls it before address is run.
+extern std::list<STrap> TrapArray;
+static PyObject*
+wpy_register_trap(PyObject *self, PyObject *args) {
+    uint32 address;
+    PyObject *hook;
+    if (!PyArg_ParseTuple(args, "IO", &address, &hook)) {
+        PyErr_SetString(PyExc_TypeError, "register_trap expects an address and a callable object");
+        return NULL;
+    }
+    for (std::list<STrap>::iterator it = TrapArray.begin(); it != TrapArray.end(); it++) {
+        if (address == it->address) {
+            Py_CLEAR(it->callback);
+            TrapArray.erase(it);
+        }
+    }
+    if (hook == Py_None) {
+        Py_RETURN_NONE;
+    } else if (!PyCallable_Check(hook)) {
+        PyErr_SetString(PyExc_TypeError, "parameter must be callable");
+        return NULL;
+    }
+    
+    STrap newTrap = {address, hook};
+    Py_INCREF(hook);
+    TrapArray.push_back(newTrap);
+    
     Py_RETURN_NONE;
 }
 
@@ -256,6 +289,8 @@ wpy_inform(PyObject *self, PyObject *args) {
 static PyMethodDef mod_wiggler[] = {
     {"register_refresh", wpy_register_refresh, METH_VARARGS,
      "register_refresh(callback)\nRegister a callback to be run at screen refresh."},
+    {"register_trap", wpy_register_trap, METH_VARARGS,
+     "register_trap(address, callback)\nRegister a callback to be run before the instruction at address."},
     
     {"peek", wpy_peek, METH_VARARGS,
      "peek(address) -> byte\nPeek at an unsigned byte in memory."},
