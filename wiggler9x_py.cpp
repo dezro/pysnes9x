@@ -65,37 +65,51 @@ wpy_register_trap(PyObject *self, PyObject *args) {
 // They get and set bytes and words without effing with the timing.
 INLINE uint8 S9xGetByteFree (uint32 Address)
 {
-	uint32 Cycles = CPU.Cycles;
-	uint32 WaitAddress = CPU.WaitAddress;
-	uint8 rv = S9xGetByte (Address);
-	CPU.WaitAddress = WaitAddress;
-	CPU.Cycles = Cycles;
-	return rv;
+    uint32 Cycles = CPU.Cycles;
+    uint32 WaitAddress = CPU.WaitAddress;
+    uint8 rv = S9xGetByte (Address);
+    CPU.WaitAddress = WaitAddress;
+    CPU.Cycles = Cycles;
+    return rv;
 }
 INLINE void S9xSetByteFree (uint8 Byte, uint32 Address)
 {
-	uint32 Cycles = CPU.Cycles;
-	uint32 WaitAddress = CPU.WaitAddress;
-	S9xSetByte (Byte, Address);
-	CPU.WaitAddress = WaitAddress;
-	CPU.Cycles = Cycles;
+    int block = ((Address&0xffffff) >> MEMMAP_SHIFT);
+    uint8 *ptr = Memory.Map [block];
+
+    if (ptr >= (uint8 *) CMemory::MAP_LAST) //rom
+        *(ptr + (Address & 0xffff)) = Byte;
+    else { //ram
+        uint32 Cycles = CPU.Cycles;
+        uint32 WaitAddress = CPU.WaitAddress;
+        S9xSetByte (Byte, Address);
+        CPU.WaitAddress = WaitAddress;
+        CPU.Cycles = Cycles;
+    }
 }
 INLINE uint16 S9xGetWordFree (uint32 Address)
 {
-	uint32 Cycles = CPU.Cycles;
-	uint32 WaitAddress = CPU.WaitAddress;
-	uint16 rv = S9xGetWord (Address);
-	CPU.WaitAddress = WaitAddress;
-	CPU.Cycles = Cycles;
-	return rv;
+    uint32 Cycles = CPU.Cycles;
+    uint32 WaitAddress = CPU.WaitAddress;
+    uint16 rv = S9xGetWord (Address);
+    CPU.WaitAddress = WaitAddress;
+    CPU.Cycles = Cycles;
+    return rv;
 }
 INLINE void S9xSetWordFree (uint16 Word, uint32 Address)
 {
-	uint32 Cycles = CPU.Cycles;
-	uint32 WaitAddress = CPU.WaitAddress;
-	S9xSetWord (Word, Address);
-	CPU.WaitAddress = WaitAddress;
-	CPU.Cycles = Cycles;
+    int block = ((Address&0xffffff) >> MEMMAP_SHIFT);
+    uint16 *ptr = (uint16*)Memory.Map [block];
+
+    if (ptr >= (uint16 *) CMemory::MAP_LAST) //rom
+        *(ptr + (Address & 0xffff)) = Word;
+    else { //ram
+        uint32 Cycles = CPU.Cycles;
+        uint32 WaitAddress = CPU.WaitAddress;
+        S9xSetWord (Word, Address);
+        CPU.WaitAddress = WaitAddress;
+        CPU.Cycles = Cycles;
+    }
 }
 // end
 
@@ -145,6 +159,18 @@ wpy_peek_signed_word(PyObject *self, PyObject *args) {
     return Py_BuildValue("h", S9xGetWordFree(address));
 }
 
+static PyObject*
+wpy_peek_bytes(PyObject *self, PyObject *args) {
+    uint32 address;
+    uint32 length;
+    if (!PyArg_ParseTuple(args, "kk", &address, &length)) {
+        PyErr_SetString(PyExc_TypeError, "peek_bytes expects an integer address and an integer length");
+        return NULL;
+    }
+    //todo: range checking!
+    return Py_BuildValue("s#", S9xGetMemPointer(address), length);
+}
+
 // As before, but for writing instead of reading.
 static PyObject*
 wpy_poke(PyObject *self, PyObject *args) {
@@ -155,13 +181,7 @@ wpy_poke(PyObject *self, PyObject *args) {
         return NULL;
     }
     
-    int block = ((address&0xffffff) >> MEMMAP_SHIFT);
-    uint8 *ptr = Memory.Map [block];
-
-    if (ptr >= (uint8 *) CMemory::MAP_LAST)
-	    *(ptr + (address & 0xffff)) = byte;
-    else
-        S9xSetByteFree(byte, address);
+    S9xSetByteFree(byte, address);
     Py_RETURN_NONE;
 }
 
@@ -174,13 +194,7 @@ wpy_poke_word(PyObject *self, PyObject *args) {
         return NULL;
     }
     
-    int block = ((address&0xffffff) >> MEMMAP_SHIFT);
-    uint16 *ptr = (uint16*)Memory.Map [block];
-
-    if (ptr >= (uint16 *) CMemory::MAP_LAST)
-	    *(ptr + (address & 0xffff)) = word;
-    else
-        S9xSetWordFree(word, address);
+    S9xSetWordFree(word, address);
     Py_RETURN_NONE;
 }
 
@@ -193,13 +207,7 @@ wpy_poke_signed(PyObject *self, PyObject *args) {
         return NULL;
     }
     
-    int block = ((address&0xffffff) >> MEMMAP_SHIFT);
-    uint8 *ptr = Memory.Map [block];
-
-    if (ptr >= (uint8 *) CMemory::MAP_LAST)
-	    *(ptr + (address & 0xffff)) = byte;
-    else
-        S9xSetByteFree(byte, address);
+    S9xSetByteFree(byte, address);
     Py_RETURN_NONE;
 }
 
@@ -212,13 +220,23 @@ wpy_poke_signed_word(PyObject *self, PyObject *args) {
         return NULL;
     }
     
-    int block = ((address&0xffffff) >> MEMMAP_SHIFT);
-    uint16 *ptr = (uint16*)Memory.Map [block];
+    S9xSetWordFree(word, address);
+    Py_RETURN_NONE;
+}
 
-    if (ptr >= (uint16 *) CMemory::MAP_LAST)
-	    *(ptr + (address & 0xffff)) = word;
-    else
-        S9xSetWordFree(word, address);
+static PyObject*
+wpy_poke_bytes(PyObject *self, PyObject *args) {
+    uint32 address;
+    uint8 *ptr;
+    uint8 *buffer;
+    uint length;
+    if (!PyArg_ParseTuple(args, "Is#", &address, &buffer, &length)) {
+        PyErr_SetString(PyExc_TypeError, "poke_bytes expects an address, followed by a string or buffer");
+        return NULL;
+    }
+    //todo: range checking!
+    ptr = S9xGetMemPointer(address);
+    memcpy(ptr, buffer, length);
     Py_RETURN_NONE;
 }
 
@@ -337,20 +355,25 @@ static PyMethodDef mod_wiggler[] = {
     
     {"peek", wpy_peek, METH_VARARGS,
      "peek(address) -> byte\nPeek at an unsigned byte in memory."},
-    {"poke", wpy_poke, METH_VARARGS,
-     "poke(address, value)\nPoke an unsigned byte into memory."},
     {"peek_signed", wpy_peek_signed, METH_VARARGS,
      "peek_signed(address) -> byte\nPeek at a signed byte in memory."},
-    {"poke_signed", wpy_poke_signed, METH_VARARGS,
-     "poke_signed(address, value)\nPoke a signed byte into memory."},
     {"peek_word", wpy_peek_word, METH_VARARGS,
      "peek_word(address) -> byte\nPeek at an unsigned word in memory."},
-    {"poke_word", wpy_poke_word, METH_VARARGS,
-     "poke_word(address, value)\nPoke an unsigned word into memory."},
     {"peek_signed_word", wpy_peek_signed_word, METH_VARARGS,
      "peek_signed_word(address) -> byte\nPeek at a signed word in memory."},
+    {"peek_bytes", wpy_peek_bytes, METH_VARARGS,
+     "peek_bytes(address, length) -> string\nPeek at contiguous bytes."},
+    
+    {"poke", wpy_poke, METH_VARARGS,
+     "poke(address, value)\nPoke an unsigned byte into memory."},
+    {"poke_signed", wpy_poke_signed, METH_VARARGS,
+     "poke_signed(address, value)\nPoke a signed byte into memory."},
+    {"poke_word", wpy_poke_word, METH_VARARGS,
+     "poke_word(address, value)\nPoke an unsigned word into memory."},
     {"poke_signed_word", wpy_poke_signed_word, METH_VARARGS,
      "poke_signed_word(address, value)\nPoke a signed word into memory."},
+    {"poke_bytes", wpy_poke_bytes, METH_VARARGS,
+     "poke_bytes(address, string)\nPoke a string into memory."},
     
     {"poll", wpy_poll, METH_VARARGS,
      "poll(player) -> buttons\nPoll the player's controller."},
