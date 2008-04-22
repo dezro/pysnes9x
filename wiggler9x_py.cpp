@@ -143,28 +143,6 @@ wpy_peek_word(PyObject *self, PyObject *args) {
 }
 
 static PyObject*
-wpy_peek_signed(PyObject *self, PyObject *args) {
-    uint32 address;
-    if (!PyArg_ParseTuple(args, "k", &address)) {
-        PyErr_SetString(PyExc_TypeError, "peek expects an integer address");
-        return NULL;
-    }
-    
-    return Py_BuildValue("b", S9xGetByteFree(address));
-}
-
-static PyObject*
-wpy_peek_signed_word(PyObject *self, PyObject *args) {
-    uint32 address;
-    if (!PyArg_ParseTuple(args, "k", &address)) {
-        PyErr_SetString(PyExc_TypeError, "peek_signed_word expects an integer address");
-        return NULL;
-    }
-    
-    return Py_BuildValue("h", S9xGetWordFree(address));
-}
-
-static PyObject*
 wpy_peek_bytes(PyObject *self, PyObject *args) {
     uint32 address;
     uint32 length;
@@ -196,32 +174,6 @@ wpy_poke_word(PyObject *self, PyObject *args) {
     uint16 word;
     if (!PyArg_ParseTuple(args, "IH", &address, &word)) {
         PyErr_SetString(PyExc_TypeError, "poke_word expects an address, followed by a word value");
-        return NULL;
-    }
-    
-    S9xSetWordFree(word, address);
-    Py_RETURN_NONE;
-}
-
-static PyObject*
-wpy_poke_signed(PyObject *self, PyObject *args) {
-    uint32 address;
-    uint8 byte;
-    if (!PyArg_ParseTuple(args, "Ib", &address, &byte)) {
-        PyErr_SetString(PyExc_TypeError, "poke_signed expects an address, followed by a signed byte value");
-        return NULL;
-    }
-    
-    S9xSetByteFree(byte, address);
-    Py_RETURN_NONE;
-}
-
-static PyObject*
-wpy_poke_signed_word(PyObject *self, PyObject *args) {
-    uint32 address;
-    uint8 word;
-    if (!PyArg_ParseTuple(args, "Ih", &address, &word)) {
-        PyErr_SetString(PyExc_TypeError, "poke_signed_word expects an address, followed by a signed word value");
         return NULL;
     }
     
@@ -360,23 +312,15 @@ static PyMethodDef mod_wiggler[] = {
     
     {"peek", wpy_peek, METH_VARARGS,
      "peek(address) -> byte\nPeek at an unsigned byte in memory."},
-    {"peek_signed", wpy_peek_signed, METH_VARARGS,
-     "peek_signed(address) -> byte\nPeek at a signed byte in memory."},
     {"peek_word", wpy_peek_word, METH_VARARGS,
      "peek_word(address) -> byte\nPeek at an unsigned word in memory."},
-    {"peek_signed_word", wpy_peek_signed_word, METH_VARARGS,
-     "peek_signed_word(address) -> byte\nPeek at a signed word in memory."},
     {"peek_bytes", wpy_peek_bytes, METH_VARARGS,
      "peek_bytes(address, length) -> string\nPeek at contiguous bytes."},
     
     {"poke", wpy_poke, METH_VARARGS,
      "poke(address, value)\nPoke an unsigned byte into memory."},
-    {"poke_signed", wpy_poke_signed, METH_VARARGS,
-     "poke_signed(address, value)\nPoke a signed byte into memory."},
     {"poke_word", wpy_poke_word, METH_VARARGS,
      "poke_word(address, value)\nPoke an unsigned word into memory."},
-    {"poke_signed_word", wpy_poke_signed_word, METH_VARARGS,
-     "poke_signed_word(address, value)\nPoke a signed word into memory."},
     {"poke_bytes", wpy_poke_bytes, METH_VARARGS,
      "poke_bytes(address, string)\nPoke a string into memory."},
     
