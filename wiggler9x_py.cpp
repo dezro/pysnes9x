@@ -1,5 +1,6 @@
 #include "wiggler9x.h"
-#include <list>
+#include <list> // registerhack
+#include <machine/endian.h> // swapping words (probably incorrectly)
 
 #include "snes9x.h"
 #include "memmap.h" // peek, poke
@@ -94,15 +95,19 @@ INLINE uint16 S9xGetWordFree (uint32 Address)
     uint16 rv = S9xGetWord (Address);
     CPU.WaitAddress = WaitAddress;
     CPU.Cycles = Cycles;
-    return rv;
+    return ntohs(rv);
 }
 INLINE void S9xSetWordFree (uint16 Word, uint32 Address)
 {
+    Word = ntohs(Word);
+    
     int block = ((Address&0xffffff) >> MEMMAP_SHIFT);
-    uint16 *ptr = (uint16*)Memory.Map [block];
+    uint8 *ptr = Memory.Map [block];
 
-    if (ptr >= (uint16 *) CMemory::MAP_LAST) //rom
-        *(ptr + (Address & 0xffff)) = Word;
+    if (ptr >= (uint8 *) CMemory::MAP_LAST) { //rom
+        *(ptr + (Address & 0xffff)) = *((uint8*)&Word);
+        *(ptr + (Address & 0xffff) + 1) = *(((uint8*)&Word)+1);
+    }
     else { //ram
         uint32 Cycles = CPU.Cycles;
         uint32 WaitAddress = CPU.WaitAddress;
