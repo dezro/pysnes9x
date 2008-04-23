@@ -120,7 +120,7 @@ INLINE void S9xSetWordFree (uint16 Word, uint32 Address)
 static PyObject*
 wpy_peek(PyObject *self, PyObject *args) {
     uint32 address;
-    if (!PyArg_ParseTuple(args, "k", &address)) {
+    if (!PyArg_ParseTuple(args, "I", &address)) {
         PyErr_SetString(PyExc_TypeError, "peek expects an integer address");
         return NULL;
     }
@@ -131,7 +131,7 @@ wpy_peek(PyObject *self, PyObject *args) {
 static PyObject*
 wpy_peek_word(PyObject *self, PyObject *args) {
     uint32 address;
-    if (!PyArg_ParseTuple(args, "k", &address)) {
+    if (!PyArg_ParseTuple(args, "I", &address)) {
         PyErr_SetString(PyExc_TypeError, "peek_word expects an integer address");
         return NULL;
     }
@@ -143,7 +143,7 @@ static PyObject*
 wpy_peek_bytes(PyObject *self, PyObject *args) {
     uint32 address;
     uint32 length;
-    if (!PyArg_ParseTuple(args, "kk", &address, &length)) {
+    if (!PyArg_ParseTuple(args, "II", &address, &length)) {
         PyErr_SetString(PyExc_TypeError, "peek_bytes expects an integer address and an integer length");
         return NULL;
     }
