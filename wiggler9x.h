@@ -31,6 +31,10 @@ void Wiggler_Refresh();
 void Wiggler_Trap(unsigned int address);
 void Wiggler_HardReset();
 void Wiggler_SoftReset();
-void Wiggler_Unload();  //todo: put this in some kind of "unloading the ROM" and/or "quitting" function.
+void Wiggler_Unload();
+
+// Opcodes:
+void Wiggler_WDMJSR(unsigned char address);
+void Wiggler_WDMJSL(unsigned short address);
 
 #endif

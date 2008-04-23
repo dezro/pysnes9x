@@ -175,6 +175,7 @@
 #include "display.h"
 #include "snapshot.h"
 #endif
+#include "wiggler9x.h"
 #include "apu.h"
 #include "sa1.h"
 #include "spc7110.h"
@@ -3248,14 +3249,11 @@ extern FILE *trace;
 extern FILE *trace2;
 #endif
 static void Op42 (void) {
-#ifdef DEBUGGER
-    uint8 byte = (uint8)
-#endif
-	                    S9xGetWord(Registers.PBPC);
+    uint8 byte = (uint8) S9xGetWord(Registers.PBPC);
     Registers.PCw++;
+    switch(byte){
 #ifdef DEBUGGER
     // Hey, let's use this to trigger debug modes
-    switch(byte){
       case 0xdb: // "STP" = Enter debug mode
         CPU.Flags |= DEBUG_MODE_FLAG;
         break;
@@ -3297,11 +3295,28 @@ static void Op42 (void) {
             Snapshot(filename);
         }
         break;
+#endif
+	// Let's use these to add Python crap, too.
+	  case 0x20: // "JSR" = Jump to Python function. Unlike real JSR, takes only one byte.
+				 // But because of that, it still fits in three bytes.
+	    uint8 jsraddr = Immediate8 (JSR);
+	    AddCycles(ONE_CYCLE);
+	    PushWE (Registers.PCw - 1);
+		Wiggler_WDMJSR(jsraddr);
+		break;
+	  case 0x22: // "JSL" = Jump to Python function. Unlike real JSL, takes only two bytes.
+				 // But because of that, it still fits in four bytes. Am I repeating myself?
+	    uint16 jsladdr = Absolute (JSR);
+	    AddCycles(ONE_CYCLE);
+	    PushB (Registers.PB);
+	    PushW (Registers.PCw - 1);
+	    Registers.SH = 1;
+		Wiggler_WDMJSL(jsladdr);
+		break;
 
       default:
         break;
     }
-#endif
 }
 
 /*****************************************************************************/

@@ -5,6 +5,7 @@
 
 #include "wiggler9x.h"
 #include "snes9x.h"
+#include "display.h" // inform
 
 PyMODINIT_FUNC initwiggler(void);
 std::list<STrap> TrapArray;
@@ -74,6 +75,14 @@ void Wiggler_Trap(uint32 address) {
         if (address == it->address)
             PyObject_CallObject(it->callback, NULL);
     }
+}
+
+// Opcodes.
+void Wiggler_WDMJSR(unsigned char address) {
+	S9xSetInfoString("Jumped!"); //todo: implement
+}
+void Wiggler_WDMJSL(unsigned short address) {
+	S9xSetInfoString("Long jumped!"); //todo: implement
 }
 
 // Clear everything from Wiggler.Context EXCEPT filename.
