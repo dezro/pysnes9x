@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdio.h>
-#include <list>
+#include <map>
 
 #include "wiggler9x.h"
 #include "snes9x.h"
 #include "display.h" // inform
 
 PyMODINIT_FUNC initwiggler(void);
-std::list<STrap> TrapArray;
+std::map<uint32, PyObject*> TrapMap;
 
 // Private API:
 void Wiggler_PyInit();
@@ -67,14 +67,10 @@ void Wiggler_Refresh() {
         PyObject_CallObject(WigglerContext.refreshCallback, NULL);
 }
 
-// Spring a trap. Maybe. In progress.
+// Spring a trap.
 void Wiggler_Trap(uint32 address) {
-    if (TrapArray.empty())
-        return;
-    for (std::list<STrap>::iterator it = TrapArray.begin(); it != TrapArray.end(); it++) {
-        if (address == it->address)
-            PyObject_CallObject(it->callback, NULL);
-    }
+    if (TrapMap.count(address))
+		PyObject_CallObject(TrapMap[address], NULL);
 }
 
 // Opcodes.
@@ -89,10 +85,10 @@ void Wiggler_WDMJSL(unsigned short address) {
 void Wiggler_ClearContext() {
     WigglerContext.loaded = false;
     Py_CLEAR(WigglerContext.refreshCallback);
-    for (std::list<STrap>::iterator it = TrapArray.begin(); it != TrapArray.end(); it++) {
-        Py_CLEAR(it->callback);
+    for (std::map<uint32, PyObject*>::iterator it = TrapMap.begin(); it != TrapMap.end(); it++) {
+        Py_CLEAR(it->second);
     }
-    TrapArray.empty();
+    TrapMap.clear();
 }
 
 // Clear us up and unload Python.

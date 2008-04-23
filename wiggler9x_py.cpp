@@ -1,5 +1,5 @@
 #include "wiggler9x.h"
-#include <list> // registerhack
+#include <map> // registerhack
 #include <machine/endian.h> // swapping words (probably incorrectly)
 
 #include "snes9x.h"
@@ -33,7 +33,7 @@ wpy_register_refresh(PyObject *self, PyObject *args) {
 
 // wiggler.register_trap(address, callable)
 // Registers the passed callable and calls it before address is run.
-extern std::list<STrap> TrapArray;
+extern std::map<uint32, PyObject*> TrapMap;
 static PyObject*
 wpy_register_trap(PyObject *self, PyObject *args) {
     uint32 address;
@@ -42,11 +42,9 @@ wpy_register_trap(PyObject *self, PyObject *args) {
         PyErr_SetString(PyExc_TypeError, "register_trap expects an address and a callable object");
         return NULL;
     }
-    for (std::list<STrap>::iterator it = TrapArray.begin(); it != TrapArray.end(); it++) {
-        if (address == it->address) {
-            Py_CLEAR(it->callback);
-            TrapArray.erase(it);
-        }
+    if (TrapMap.count(address)) {
+		Py_CLEAR(TrapMap[address]);
+		TrapMap.erase(address);
     }
     if (hook == Py_None) {
         Py_RETURN_NONE;
@@ -55,9 +53,8 @@ wpy_register_trap(PyObject *self, PyObject *args) {
         return NULL;
     }
     
-    STrap newTrap = {address, hook};
     Py_INCREF(hook);
-    TrapArray.push_back(newTrap);
+	TrapMap[address] = hook;
     
     Py_RETURN_NONE;
 }

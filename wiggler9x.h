@@ -11,11 +11,6 @@
 # include <Python.h>
 #endif
 
-struct STrap {
-    unsigned int address;
-    PyObject* callback;
-};
-
 struct SWigglerContext {
     bool loaded;
     char* filename;
