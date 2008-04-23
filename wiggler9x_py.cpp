@@ -1,7 +1,6 @@
 #include "wiggler9x.h"
 #include <map> // registerhack
 #include <vector> // subroutine
-#include <machine/endian.h> // swapping words (probably incorrectly)
 
 #include "snes9x.h"
 #include "memmap.h" // peek, poke
@@ -79,8 +78,8 @@ wpy_register_sub(PyObject *self, PyObject *args) {
     return Py_BuildValue("I", PyRoutines.size() - 1);
 }
 
-// The following four functions are stolen or modified from cheats2.cpp.
-// They get and set bytes and words without effing with the timing.
+// The following two functions are stolen from cheats2.cpp.
+// They get and set bytes without effing with the timing.
 INLINE uint8 S9xGetByteFree (uint32 Address)
 {
     uint32 Cycles = CPU.Cycles;
@@ -105,38 +104,9 @@ INLINE void S9xSetByteFree (uint8 Byte, uint32 Address)
         CPU.Cycles = Cycles;
     }
 }
-INLINE uint16 S9xGetWordFree (uint32 Address)
-{
-    uint32 Cycles = CPU.Cycles;
-    uint32 WaitAddress = CPU.WaitAddress;
-    uint16 rv = S9xGetWord (Address);
-    CPU.WaitAddress = WaitAddress;
-    CPU.Cycles = Cycles;
-    return ntohs(rv);
-}
-INLINE void S9xSetWordFree (uint16 Word, uint32 Address)
-{
-    Word = ntohs(Word);
-    
-    int block = ((Address&0xffffff) >> MEMMAP_SHIFT);
-    uint8 *ptr = Memory.Map [block];
-
-    if (ptr >= (uint8 *) CMemory::MAP_LAST) { //rom
-        *(ptr + (Address & 0xffff)) = *((uint8*)&Word);
-        *(ptr + (Address & 0xffff) + 1) = *(((uint8*)&Word)+1);
-    }
-    else { //ram
-        uint32 Cycles = CPU.Cycles;
-        uint32 WaitAddress = CPU.WaitAddress;
-        S9xSetWord (Word, Address);
-        CPU.WaitAddress = WaitAddress;
-        CPU.Cycles = Cycles;
-    }
-}
 // end
 
-// The following four functions 'peek' at a value in memory. Standard 'peek'
-// gives an unsigned byte. Suffixes change to signed, word, or both.
+// The following four functions 'peek' at a byte in memory.
 static PyObject*
 wpy_peek(PyObject *self, PyObject *args) {
     uint32 address;
@@ -146,17 +116,6 @@ wpy_peek(PyObject *self, PyObject *args) {
     }
     
     return Py_BuildValue("B", S9xGetByteFree(address));
-}
-
-static PyObject*
-wpy_peek_word(PyObject *self, PyObject *args) {
-    uint32 address;
-    if (!PyArg_ParseTuple(args, "I", &address)) {
-        PyErr_SetString(PyExc_TypeError, "peek_word expects an integer address");
-        return NULL;
-    }
-    
-    return Py_BuildValue("H", S9xGetWordFree(address));
 }
 
 static PyObject*
@@ -182,19 +141,6 @@ wpy_poke(PyObject *self, PyObject *args) {
     }
     
     S9xSetByteFree(byte, address);
-    Py_RETURN_NONE;
-}
-
-static PyObject*
-wpy_poke_word(PyObject *self, PyObject *args) {
-    uint32 address;
-    uint16 word;
-    if (!PyArg_ParseTuple(args, "IH", &address, &word)) {
-        PyErr_SetString(PyExc_TypeError, "poke_word expects an address, followed by a word value");
-        return NULL;
-    }
-    
-    S9xSetWordFree(word, address);
     Py_RETURN_NONE;
 }
 
@@ -333,15 +279,11 @@ static PyMethodDef mod_wiggler[] = {
     
     {"peek", wpy_peek, METH_VARARGS,
      "peek(address) -> byte\nPeek at an unsigned byte in memory."},
-    {"peek_word", wpy_peek_word, METH_VARARGS,
-     "peek_word(address) -> byte\nPeek at an unsigned word in memory."},
     {"peek_bytes", wpy_peek_bytes, METH_VARARGS,
      "peek_bytes(address, length) -> string\nPeek at contiguous bytes."},
     
     {"poke", wpy_poke, METH_VARARGS,
      "poke(address, value)\nPoke an unsigned byte into memory."},
-    {"poke_word", wpy_poke_word, METH_VARARGS,
-     "poke_word(address, value)\nPoke an unsigned word into memory."},
     {"poke_bytes", wpy_poke_bytes, METH_VARARGS,
      "poke_bytes(address, string)\nPoke a string into memory."},
     
