@@ -3301,17 +3301,17 @@ static void Op42 (void) {
 				 // But because of that, it still fits in three bytes.
 	    uint8 jsraddr = Immediate8 (JSR);
 	    AddCycles(ONE_CYCLE);
-	    PushWE (Registers.PCw - 1);
+        // PushWE (Registers.PCw - 1);
 		Wiggler_WDMJSR(jsraddr);
 		break;
 	  case 0x22: // "JSL" = Jump to Python function. Unlike real JSL, takes only two bytes.
 				 // But because of that, it still fits in four bytes. Am I repeating myself?
 	    uint16 jsladdr = Absolute (JSR);
 	    AddCycles(ONE_CYCLE);
-	    PushB (Registers.PB);
-	    PushW (Registers.PCw - 1);
-	    Registers.SH = 1;
-		Wiggler_WDMJSL(jsladdr);
+        // PushB (Registers.PB);
+        // PushW (Registers.PCw - 1);
+        // Registers.SH = 1;
+        Wiggler_WDMJSL(jsladdr);
 		break;
 
       default:
