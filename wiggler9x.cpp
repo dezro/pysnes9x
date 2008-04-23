@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <map>
+#include <vector>
 
 #include "wiggler9x.h"
 #include "snes9x.h"
@@ -9,6 +10,7 @@
 
 PyMODINIT_FUNC initwiggler(void);
 std::map<uint32, PyObject*> TrapMap;
+std::vector<PyObject*> PyRoutines;
 
 // Private API:
 void Wiggler_PyInit();
@@ -70,25 +72,37 @@ void Wiggler_Refresh() {
 // Spring a trap.
 void Wiggler_Trap(uint32 address) {
     if (TrapMap.count(address))
-		PyObject_CallObject(TrapMap[address], NULL);
+        PyObject_CallObject(TrapMap[address], NULL);
 }
 
 // Opcodes.
 void Wiggler_WDMJSR(unsigned char address) {
-	S9xSetInfoString("Jumped!"); //todo: implement
+    if ((PyRoutines.size() > address) && (PyRoutines[address] != NULL))
+        PyObject_CallObject(PyRoutines[address], NULL);
+    // else crash?
 }
 void Wiggler_WDMJSL(unsigned short address) {
-	S9xSetInfoString("Long jumped!"); //todo: implement
+    if ((PyRoutines.size() > address) && (PyRoutines[address] != NULL))
+        PyObject_CallObject(PyRoutines[address], NULL);
+    // else crash?
 }
 
 // Clear everything from Wiggler.Context EXCEPT filename.
 void Wiggler_ClearContext() {
     WigglerContext.loaded = false;
+    
+    // Refresh callback
     Py_CLEAR(WigglerContext.refreshCallback);
-    for (std::map<uint32, PyObject*>::iterator it = TrapMap.begin(); it != TrapMap.end(); it++) {
+    
+    // Traps
+    for (std::map<uint32, PyObject*>::iterator it = TrapMap.begin(); it != TrapMap.end(); it++)
         Py_CLEAR(it->second);
-    }
     TrapMap.clear();
+    
+    // Fake Subroutines
+    for (std::vector<PyObject*>::iterator it = PyRoutines.begin(); it != PyRoutines.end(); it++)
+        Py_CLEAR(*it);
+    PyRoutines.clear();
 }
 
 // Clear us up and unload Python.

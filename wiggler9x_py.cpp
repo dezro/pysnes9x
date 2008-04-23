@@ -1,5 +1,6 @@
 #include "wiggler9x.h"
 #include <map> // registerhack
+#include <vector> // subroutine
 #include <machine/endian.h> // swapping words (probably incorrectly)
 
 #include "snes9x.h"
@@ -43,8 +44,8 @@ wpy_register_trap(PyObject *self, PyObject *args) {
         return NULL;
     }
     if (TrapMap.count(address)) {
-		Py_CLEAR(TrapMap[address]);
-		TrapMap.erase(address);
+        Py_CLEAR(TrapMap[address]);
+        TrapMap.erase(address);
     }
     if (hook == Py_None) {
         Py_RETURN_NONE;
@@ -54,9 +55,28 @@ wpy_register_trap(PyObject *self, PyObject *args) {
     }
     
     Py_INCREF(hook);
-	TrapMap[address] = hook;
+    TrapMap[address] = hook;
     
     Py_RETURN_NONE;
+}
+
+// wiggler.register_sub(callable) -> fake_address
+// Registers the passed callable as a WDM JSR subroutine at the returned address.
+extern std::vector<PyObject*> PyRoutines;
+static PyObject*
+wpy_register_sub(PyObject *self, PyObject *args) {
+    PyObject *hook;
+    if (!PyArg_ParseTuple(args, "O", &hook)) {
+        PyErr_SetString(PyExc_TypeError, "register_sub expects a callable");
+        return NULL;
+    }
+    if (!PyCallable_Check(hook)) {
+        PyErr_SetString(PyExc_TypeError, "register_sub expects a callable");
+        return NULL;
+    }
+    
+    PyRoutines.push_back(hook);
+    return Py_BuildValue("I", PyRoutines.size() - 1);
 }
 
 // The following four functions are stolen or modified from cheats2.cpp.
@@ -278,8 +298,8 @@ static PyObject*
 wpy_short_return(PyObject *self, PyObject *args) {
     //AddCycles(TWO_CYCLES);
     Registers.SL++;
-	Registers.PCw = S9xGetWord(Registers.S.W, WRAP_PAGE);
-	Registers.SL++;
+    Registers.PCw = S9xGetWord(Registers.S.W, WRAP_PAGE);
+    Registers.SL++;
     //AddCycles(ONE_CYCLE);
     Registers.PCw++;
     S9xSetPCBase (Registers.PBPC);
@@ -292,7 +312,7 @@ static PyObject*
 wpy_long_return(PyObject *self, PyObject *args) {
     //AddCycles(TWO_CYCLES);
     Registers.PCw = S9xGetWord(Registers.S.W + 1, WRAP_BANK);
-	Registers.S.W += 2;
+    Registers.S.W += 2;
     Registers.PB = S9xGetByte(++Registers.S.W);
     Registers.SH = 1;
     Registers.PCw++;
@@ -306,6 +326,10 @@ static PyMethodDef mod_wiggler[] = {
      "register_refresh(callback)\nRegister a callback to be run at screen refresh."},
     {"register_trap", wpy_register_trap, METH_VARARGS,
      "register_trap(address, callback)\nRegister a callback to be run before the instruction at address."},
+    {"register_sub", wpy_register_sub, METH_VARARGS,
+     "register_sub(callback)\nRegister a callback as a subroutine at the fake address of the return value.\n"
+     "Call it from 65816 code by poking 0x4220xx, where xx is the returned value.\n"
+     "You can also poke 0x4222xx00."},
     
     {"peek", wpy_peek, METH_VARARGS,
      "peek(address) -> byte\nPeek at an unsigned byte in memory."},
