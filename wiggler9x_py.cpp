@@ -3,10 +3,10 @@
 #include <vector> // subroutine
 
 #include "snes9x.h"
-#include "memmap.h" // peek, poke
+#include "memmap.h" // peek, poke, push, pull
 #include "controls.h" // poll
 #include "display.h" // inform
-#include "65c816.h" // registerhack
+#include "65c816.h" // push, pull
 
 // wiggler.register_refresh(callable)
 // Registers the passed callable, so we may call it at screen refresh.
@@ -78,86 +78,49 @@ wpy_register_sub(PyObject *self, PyObject *args) {
     return Py_BuildValue("I", PyRoutines.size() - 1);
 }
 
-// The following two functions are stolen from cheats2.cpp.
-// They get and set bytes without effing with the timing.
-INLINE uint8 S9xGetByteFree (uint32 Address)
-{
-    uint32 Cycles = CPU.Cycles;
-    uint32 WaitAddress = CPU.WaitAddress;
-    uint8 rv = S9xGetByte (Address);
-    CPU.WaitAddress = WaitAddress;
-    CPU.Cycles = Cycles;
-    return rv;
-}
-INLINE void S9xSetByteFree (uint8 Byte, uint32 Address)
-{
-    int block = ((Address&0xffffff) >> MEMMAP_SHIFT);
-    uint8 *ptr = Memory.Map [block];
-
-    if (ptr >= (uint8 *) CMemory::MAP_LAST) //rom
-        *(ptr + (Address & 0xffff)) = Byte;
-    else { //ram
-        uint32 Cycles = CPU.Cycles;
-        uint32 WaitAddress = CPU.WaitAddress;
-        S9xSetByte (Byte, Address);
-        CPU.WaitAddress = WaitAddress;
-        CPU.Cycles = Cycles;
-    }
-}
-// end
-
-// The following four functions 'peek' at a byte in memory.
+// The following function 'peeks' at a byte in memory.
 static PyObject*
 wpy_peek(PyObject *self, PyObject *args) {
     uint32 address;
-    if (!PyArg_ParseTuple(args, "I", &address)) {
-        PyErr_SetString(PyExc_TypeError, "peek expects an integer address");
+    uint32 length = 0;
+    if (!PyArg_ParseTuple(args, "I|I", &address, &length)) {
+        PyErr_SetString(PyExc_TypeError, "peek expects an integer address and an optional length");
         return NULL;
     }
     
-    return Py_BuildValue("B", S9xGetByteFree(address));
-}
-
-static PyObject*
-wpy_peek_bytes(PyObject *self, PyObject *args) {
-    uint32 address;
-    uint32 length;
-    if (!PyArg_ParseTuple(args, "II", &address, &length)) {
-        PyErr_SetString(PyExc_TypeError, "peek_bytes expects an integer address and an integer length");
-        return NULL;
-    }
-    //todo: range checking!
-    return Py_BuildValue("s#", S9xGetMemPointer(address), length);
+    if (length)
+        return Py_BuildValue("s#", S9xGetMemPointer(address), length); //todo: length checking
+    return Py_BuildValue("B", *S9xGetMemPointer(address));
 }
 
 // As before, but for writing instead of reading.
 static PyObject*
 wpy_poke(PyObject *self, PyObject *args) {
     uint32 address;
-    uint8 byte;
-    if (!PyArg_ParseTuple(args, "IB", &address, &byte)) {
-        PyErr_SetString(PyExc_TypeError, "poke expects an address, followed by a byte value");
+    PyObject* byte_or_buffer;
+    uint8 *memptr;
+    if (!PyArg_ParseTuple(args, "IO", &address, &byte_or_buffer)) {
+        PyErr_SetString(PyExc_TypeError, "poke expects an address, followed by a byte value, string, or buffer-compatible object (like an array)");
         return NULL;
     }
     
-    S9xSetByteFree(byte, address);
-    Py_RETURN_NONE;
-}
-
-static PyObject*
-wpy_poke_bytes(PyObject *self, PyObject *args) {
-    uint32 address;
-    uint8 *ptr;
-    uint8 *buffer;
-    uint length;
-    if (!PyArg_ParseTuple(args, "Is#", &address, &buffer, &length)) {
-        PyErr_SetString(PyExc_TypeError, "poke_bytes expects an address, followed by a string or buffer");
-        return NULL;
+    memptr = S9xGetMemPointer(address);
+    if (PyObject_CheckReadBuffer(byte_or_buffer)) { // buffer
+        const uint8 *bufptr;
+        Py_ssize_t length;
+        PyObject_AsReadBuffer(byte_or_buffer, (const void**)&bufptr, &length);
+        memcpy(memptr, bufptr, length); //todo: LENGTH CHECKING (PLEASE!)
+        Py_RETURN_NONE;
+    } else { // hopefully an int
+        long value;
+        value = PyInt_AsLong(byte_or_buffer);
+        if (value == -1 && PyErr_Occurred()) {
+            // todo: replace this with a more proper exception
+            return NULL;
+        }
+        *memptr = (uint8)value;
+        Py_RETURN_NONE;
     }
-    //todo: range checking!
-    ptr = S9xGetMemPointer(address);
-    memcpy(ptr, buffer, length);
-    Py_RETURN_NONE;
 }
 
 // wiggler.poll returns an integer in which each bit is a button on the controller.
@@ -278,14 +241,12 @@ static PyMethodDef mod_wiggler[] = {
      "You can also poke 0x4222xx00."},
     
     {"peek", wpy_peek, METH_VARARGS,
-     "peek(address) -> byte\nPeek at an unsigned byte in memory."},
-    {"peek_bytes", wpy_peek_bytes, METH_VARARGS,
-     "peek_bytes(address, length) -> string\nPeek at contiguous bytes."},
+     "peek(address) -> int\nPeek at a byte in memory.\n\n"
+     "peek(address, length) -> string\nPeek at many bytes in memory."},
     
     {"poke", wpy_poke, METH_VARARGS,
-     "poke(address, value)\nPoke an unsigned byte into memory."},
-    {"poke_bytes", wpy_poke_bytes, METH_VARARGS,
-     "poke_bytes(address, string)\nPoke a string into memory."},
+     "poke(address, value)\nPoke a byte into memory.\n\n"
+     "poke(address, string)\nPoke a string into memory."},
     
     {"poll", wpy_poll, METH_VARARGS,
      "poll(player) -> buttons\nPoll the player's controller."},
