@@ -48,7 +48,7 @@ void Wiggler_HardReset() {
 
 // Initializes Python and loads the script.
 void Wiggler_PyInit() {
-    Py_Initialize();
+    Py_InitializeEx(0);
     initwiggler();
     
     FILE* pyscript_file  = NULL;
