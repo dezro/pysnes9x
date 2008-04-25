@@ -162,11 +162,23 @@ wpy_poll_mouse(PyObject *self, PyObject *args) {
 static PyObject*
 wpy_inform(PyObject *self, PyObject *args) {
     PyObject *object = NULL;
-    if (!PyArg_ParseTuple(args, "|O", &string))
+    if (!PyArg_ParseTuple(args, "|O", &object))
         return NULL;
     
-    if (string)
-        S9xSetInfoString(string);
+    if (object) {
+        PyObject *pyString = PyObject_Str(object);
+        if (pyString) {
+            char *string = PyString_AsString(pyString);
+            if (string)
+                S9xSetInfoString(string);
+            Py_DECREF(pyString);
+            if (!string) //should probably never happen but whatever
+                return NULL;
+        } else {
+            PyErr_SetString(PyExc_TypeError, "cannot get string form of object");
+            return NULL;
+        }
+    }
     else
         S9xSetInfoString("");
     Py_RETURN_NONE;
