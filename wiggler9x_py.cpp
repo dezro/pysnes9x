@@ -13,10 +13,8 @@
 static PyObject*
 wpy_register_refresh(PyObject *self, PyObject *args) {
     PyObject *hook;
-    if (!PyArg_ParseTuple(args, "O", &hook)) {
-        PyErr_SetString(PyExc_TypeError, "register_refresh expects one callable object");
+    if (!PyArg_ParseTuple(args, "O", &hook))
         return NULL;
-    }
     if (hook == Py_None) {
         Py_CLEAR(WigglerContext.refreshCallback);
         Py_RETURN_NONE;
@@ -38,10 +36,8 @@ static PyObject*
 wpy_register_trap(PyObject *self, PyObject *args) {
     uint32 address;
     PyObject *hook;
-    if (!PyArg_ParseTuple(args, "IO", &address, &hook)) {
-        PyErr_SetString(PyExc_TypeError, "register_trap expects an address and a callable object");
+    if (!PyArg_ParseTuple(args, "IO", &address, &hook))
         return NULL;
-    }
     if (TrapMap.count(address)) {
         Py_CLEAR(TrapMap[address]);
         TrapMap.erase(address);
@@ -65,10 +61,8 @@ extern std::vector<PyObject*> PyRoutines;
 static PyObject*
 wpy_register_sub(PyObject *self, PyObject *args) {
     PyObject *hook;
-    if (!PyArg_ParseTuple(args, "O", &hook)) {
-        PyErr_SetString(PyExc_TypeError, "register_sub expects a callable");
+    if (!PyArg_ParseTuple(args, "O", &hook))
         return NULL;
-    }
     if (!PyCallable_Check(hook)) {
         PyErr_SetString(PyExc_TypeError, "register_sub expects a callable");
         return NULL;
@@ -83,10 +77,8 @@ static PyObject*
 wpy_peek(PyObject *self, PyObject *args) {
     uint32 address;
     uint32 length = 0;
-    if (!PyArg_ParseTuple(args, "I|I", &address, &length)) {
-        PyErr_SetString(PyExc_TypeError, "peek expects an integer address and an optional length");
+    if (!PyArg_ParseTuple(args, "I|I", &address, &length))
         return NULL;
-    }
     
     if (length)
         return Py_BuildValue("s#", S9xGetMemPointer(address), length); //todo: length checking
@@ -99,10 +91,8 @@ wpy_poke(PyObject *self, PyObject *args) {
     uint32 address;
     PyObject* byte_or_buffer;
     uint8 *memptr;
-    if (!PyArg_ParseTuple(args, "IO", &address, &byte_or_buffer)) {
-        PyErr_SetString(PyExc_TypeError, "poke expects an address, followed by a byte value, string, or buffer-compatible object (like an array)");
+    if (!PyArg_ParseTuple(args, "IO", &address, &byte_or_buffer))
         return NULL;
-    }
     
     memptr = S9xGetMemPointer(address);
     if (PyObject_CheckReadBuffer(byte_or_buffer)) { // buffer
@@ -128,10 +118,8 @@ uint16 MovieGetJoypad(int i);
 static PyObject*
 wpy_poll(PyObject *self, PyObject *args) {
     uint player;
-    if (!PyArg_ParseTuple(args, "I", &player)) {
-        PyErr_SetString(PyExc_TypeError, "poll expects a player number");
+    if (!PyArg_ParseTuple(args, "I", &player))
         return NULL;
-    }
     if (player > 7) {
         PyErr_SetString(PyExc_ValueError, "poll expects a player number from 0 to 7");
         return NULL;
@@ -150,10 +138,8 @@ wpy_poll_mouse(PyObject *self, PyObject *args) {
     int16 x, y;
     bool pressed;
     
-    if (!PyArg_ParseTuple(args, "|I", &player)) {
-        PyErr_SetString(PyExc_TypeError, "poll_mouse expects a player number");
+    if (!PyArg_ParseTuple(args, "|I", &player))
         return NULL;
-    }
     if (player == 0) {
         pid += 0x100; // ID of player 1 mouse
         bid += 0x100;
@@ -175,11 +161,9 @@ wpy_poll_mouse(PyObject *self, PyObject *args) {
 // wiggler.inform displays the passed string
 static PyObject*
 wpy_inform(PyObject *self, PyObject *args) {
-    char *string = NULL;
-    if (!PyArg_ParseTuple(args, "|z", &string)) {
-        PyErr_SetString(PyExc_TypeError, "inform expects a plain ascii string");
+    PyObject *object = NULL;
+    if (!PyArg_ParseTuple(args, "|O", &string))
         return NULL;
-    }
     
     if (string)
         S9xSetInfoString(string);
@@ -192,10 +176,8 @@ wpy_inform(PyObject *self, PyObject *args) {
 static PyObject*
 wpy_jump(PyObject *self, PyObject *args) {
     uint32 address;
-    if (!PyArg_ParseTuple(args, "I", &address)) {
-        PyErr_SetString(PyExc_TypeError, "jump expects an address");
+    if (!PyArg_ParseTuple(args, "I", &address))
         return NULL;
-    }
     
     Registers.PCw = address & 0xFFFF;
     Registers.PB = address >> 16;
