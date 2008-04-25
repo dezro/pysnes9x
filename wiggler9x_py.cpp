@@ -68,6 +68,7 @@ wpy_register_sub(PyObject *self, PyObject *args) {
         return NULL;
     }
     
+    Py_INCREF(hook);
     PyRoutines.push_back(hook);
     return Py_BuildValue("I", PyRoutines.size() - 1);
 }
