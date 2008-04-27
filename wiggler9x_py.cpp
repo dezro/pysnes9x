@@ -31,16 +31,15 @@ wpy_register_refresh(PyObject *self, PyObject *args) {
 
 // wiggler.register_trap(address, callable)
 // Registers the passed callable and calls it before address is run.
-extern std::map<uint32, PyObject*> TrapMap;
 static PyObject*
 wpy_register_trap(PyObject *self, PyObject *args) {
     uint32 address;
     PyObject *hook;
     if (!PyArg_ParseTuple(args, "IO", &address, &hook))
         return NULL;
-    if (TrapMap.count(address)) {
-        Py_CLEAR(TrapMap[address]);
-        TrapMap.erase(address);
+    if (WigglerContext.TrapMap.count(address)) {
+        Py_CLEAR(WigglerContext.TrapMap[address]);
+        WigglerContext.TrapMap.erase(address);
     }
     if (hook == Py_None) {
         Py_RETURN_NONE;
@@ -50,14 +49,13 @@ wpy_register_trap(PyObject *self, PyObject *args) {
     }
     
     Py_INCREF(hook);
-    TrapMap[address] = hook;
+    WigglerContext.TrapMap[address] = hook;
     
     Py_RETURN_NONE;
 }
 
 // wiggler.register_sub(callable) -> fake_address
 // Registers the passed callable as a WDM JSR subroutine at the returned address.
-extern std::vector<PyObject*> PyRoutines;
 static PyObject*
 wpy_register_sub(PyObject *self, PyObject *args) {
     PyObject *hook;
@@ -69,8 +67,8 @@ wpy_register_sub(PyObject *self, PyObject *args) {
     }
     
     Py_INCREF(hook);
-    PyRoutines.push_back(hook);
-    return Py_BuildValue("I", PyRoutines.size() - 1);
+    WigglerContext.PyRoutines.push_back(hook);
+    return Py_BuildValue("I", WigglerContext.PyRoutines.size() - 1);
 }
 
 // The following function 'peeks' at a byte in memory.

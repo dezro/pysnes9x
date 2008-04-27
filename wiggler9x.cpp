@@ -1,16 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdio.h>
-#include <map>
-#include <vector>
 
 #include "wiggler9x.h"
 #include "snes9x.h"
 #include "display.h" // inform
 
 PyMODINIT_FUNC initwiggler(void);
-std::map<uint32, PyObject*> TrapMap;
-std::vector<PyObject*> PyRoutines;
 
 // Private API:
 void Wiggler_PyInit();
@@ -71,19 +67,19 @@ void Wiggler_Refresh() {
 
 // Spring a trap.
 void Wiggler_Trap(uint32 address) {
-    if (TrapMap.count(address))
-        PyObject_CallObject(TrapMap[address], NULL);
+    if (WigglerContext.TrapMap.count(address))
+        PyObject_CallObject(WigglerContext.TrapMap[address], NULL);
 }
 
 // Opcodes.
 void Wiggler_WDMJSR(unsigned char address) {
-    if ((PyRoutines.size() > address) && (PyRoutines[address] != NULL))
-        PyObject_CallObject(PyRoutines[address], NULL);
+    if ((WigglerContext.PyRoutines.size() > address) && (WigglerContext.PyRoutines[address] != NULL))
+        PyObject_CallObject(WigglerContext.PyRoutines[address], NULL);
     // else crash?
 }
 void Wiggler_WDMJSL(unsigned short address) {
-    if ((PyRoutines.size() > address) && (PyRoutines[address] != NULL))
-        PyObject_CallObject(PyRoutines[address], NULL);
+    if ((WigglerContext.PyRoutines.size() > address) && (WigglerContext.PyRoutines[address] != NULL))
+        PyObject_CallObject(WigglerContext.PyRoutines[address], NULL);
     // else crash?
 }
 
@@ -95,14 +91,14 @@ void Wiggler_ClearContext() {
     Py_CLEAR(WigglerContext.refreshCallback);
     
     // Traps
-    for (std::map<uint32, PyObject*>::iterator it = TrapMap.begin(); it != TrapMap.end(); it++)
+    for (MTrapMap::iterator it = WigglerContext.TrapMap.begin(); it != WigglerContext.TrapMap.end(); it++)
         Py_CLEAR(it->second);
-    TrapMap.clear();
+    WigglerContext.TrapMap.clear();
     
     // Fake Subroutines
-    for (std::vector<PyObject*>::iterator it = PyRoutines.begin(); it != PyRoutines.end(); it++)
+    for (VPyRoutines::iterator it = WigglerContext.PyRoutines.begin(); it != WigglerContext.PyRoutines.end(); it++)
         Py_CLEAR(*it);
-    PyRoutines.clear();
+    WigglerContext.PyRoutines.clear();
 }
 
 // Clear us up and unload Python.

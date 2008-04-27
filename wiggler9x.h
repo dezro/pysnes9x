@@ -11,10 +11,19 @@
 # include <Python.h>
 #endif
 
+#include <map>
+#include <vector>
+
+typedef std::map<unsigned int, PyObject*> MTrapMap;
+typedef std::vector<PyObject*> VPyRoutines;
+
 struct SWigglerContext {
     bool loaded;
     char* filename;
     PyObject* refreshCallback;
+    MTrapMap TrapMap;
+    VPyRoutines PyRoutines;
+    
     // todo: screen objects
     //       click/touch callback
     //       music?
