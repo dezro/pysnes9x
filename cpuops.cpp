@@ -2817,6 +2817,7 @@ static void Op22E1 (void) {
     PushW (Registers.PCw - 1);
     Registers.SH = 1;
     S9xSetPCBase (addr);
+    Wiggler_SubJump();
 }
 
 static void Op22E0 (void) {
@@ -2824,6 +2825,7 @@ static void Op22E0 (void) {
     PushB (Registers.PB);
     PushW (Registers.PCw - 1);
     S9xSetPCBase (addr);
+    Wiggler_SubJump();
 }
 
 static void Op22Slow (void) {
@@ -2832,12 +2834,15 @@ static void Op22Slow (void) {
     PushW (Registers.PCw - 1);
     if(CheckEmulation()) Registers.SH = 1;
     S9xSetPCBase (addr);
+    Wiggler_SubJump();
 }
 
 static void Op6BE1 (void) {
     /* Note: RTL is a new instruction, and so doesn't respect the emu-mode
      * stack bounds */
     AddCycles(TWO_CYCLES);
+    if (Wiggler_SubReturn())
+        return;
     PullW (Registers.PCw);
     PullB (Registers.PB);
     Registers.SH = 1;
@@ -2847,6 +2852,8 @@ static void Op6BE1 (void) {
 
 static void Op6BE0 (void) {
     AddCycles(TWO_CYCLES);
+    if (Wiggler_SubReturn())
+        return;
     PullW (Registers.PCw);
     PullB (Registers.PB);
     Registers.PCw++;
@@ -2855,6 +2862,8 @@ static void Op6BE0 (void) {
 
 static void Op6BSlow (void) {
     AddCycles(TWO_CYCLES);
+    if (Wiggler_SubReturn())
+        return;
     PullW (Registers.PCw);
     PullB (Registers.PB);
     if(CheckEmulation()) Registers.SH = 1;
@@ -2870,6 +2879,7 @@ static void Op20E1 (void) {
     AddCycles(ONE_CYCLE);
     PushWE (Registers.PCw - 1);
     S9xSetPCBase (ICPU.ShiftedPB + addr);
+    Wiggler_SubJump();
 }
 
 static void Op20E0 (void) {
@@ -2877,6 +2887,7 @@ static void Op20E0 (void) {
     AddCycles(ONE_CYCLE);
     PushW (Registers.PCw - 1);
     S9xSetPCBase (ICPU.ShiftedPB + addr);
+    Wiggler_SubJump();
 }
 
 static void Op20Slow (void) {
@@ -2888,6 +2899,7 @@ static void Op20Slow (void) {
         PushW (Registers.PCw - 1);
     }
     S9xSetPCBase (ICPU.ShiftedPB + addr);
+    Wiggler_SubJump();
 }
 
 static void OpFCE1 (void) {
@@ -2897,12 +2909,14 @@ static void OpFCE1 (void) {
     PushW (Registers.PCw - 1);
     Registers.SH = 1;
     S9xSetPCBase (ICPU.ShiftedPB + addr);
+    Wiggler_SubJump();
 }
 
 static void OpFCE0 (void) {
     uint16 addr = AbsoluteIndexedIndirect (JSR);
     PushW (Registers.PCw - 1);
     S9xSetPCBase (ICPU.ShiftedPB + addr);
+    Wiggler_SubJump();
 }
 
 static void OpFCSlow (void) {
@@ -2910,10 +2924,13 @@ static void OpFCSlow (void) {
     PushW (Registers.PCw - 1);
     if(CheckEmulation()) Registers.SH = 1;
     S9xSetPCBase (ICPU.ShiftedPB + addr);
+    Wiggler_SubJump();
 }
 
 static void Op60E1 (void) {
     AddCycles(TWO_CYCLES);
+    if (Wiggler_SubReturn())
+        return;
     PullWE (Registers.PCw);
     AddCycles(ONE_CYCLE);
     Registers.PCw++;
@@ -2922,6 +2939,8 @@ static void Op60E1 (void) {
 
 static void Op60E0 (void) {
     AddCycles(TWO_CYCLES);
+    if (Wiggler_SubReturn())
+        return;
     PullW (Registers.PCw);
     AddCycles(ONE_CYCLE);
     Registers.PCw++;
@@ -2930,6 +2949,8 @@ static void Op60E0 (void) {
 
 static void Op60Slow (void) {
     AddCycles(TWO_CYCLES);
+    if (Wiggler_SubReturn())
+        return;
     if(CheckEmulation()){
         PullWE (Registers.PCw);
     } else {

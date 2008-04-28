@@ -274,7 +274,10 @@ void S9xMainLoop (void)
 #endif
 		}
 		
-        Wiggler_Trap(Registers.PCw + (Registers.PB << 16));
+		if (WigglerContext.avoidInfiniteHookLoop)
+            WigglerContext.avoidInfiniteHookLoop = false;
+        else
+            Wiggler_Trap(Registers.PCw + (Registers.PB << 16));
 
 #ifdef CPU_SHUTDOWN
 		CPU.PBPCAtOpcodeStart = Registers.PBPC;

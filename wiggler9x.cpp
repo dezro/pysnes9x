@@ -5,6 +5,7 @@
 #include "wiggler9x.h"
 #include "snes9x.h"
 #include "display.h" // inform
+#include "65c816.h"
 
 PyMODINIT_FUNC initwiggler(void);
 
@@ -83,6 +84,19 @@ void Wiggler_WDMJSL(unsigned short address) {
     // else crash?
 }
 
+void Wiggler_SubReturnB() {
+    SReturnData &rdat = WigglerContext.ReturnStack.top();
+    Registers.PB = rdat.bank;
+    Registers.PCw = rdat.addr;
+    Registers.P.W = rdat.flags;
+    if (rdat.callback) {
+        PyObject_CallObject(rdat.callback, NULL);
+        Py_CLEAR(rdat.callback);
+    }
+    WigglerContext.ReturnStack.pop();
+    WigglerContext.avoidInfiniteHookLoop = true;
+}
+
 // Clear everything from Wiggler.Context EXCEPT filename.
 void Wiggler_ClearContext() {
     WigglerContext.loaded = false;
@@ -99,6 +113,15 @@ void Wiggler_ClearContext() {
     for (VPyRoutines::iterator it = WigglerContext.PyRoutines.begin(); it != WigglerContext.PyRoutines.end(); it++)
         Py_CLEAR(*it);
     WigglerContext.PyRoutines.clear();
+    
+    // Return data
+    while (!WigglerContext.ReturnStack.empty()) {
+        SReturnData &rdat = WigglerContext.ReturnStack.top();
+        Py_CLEAR(rdat.callback);
+        WigglerContext.ReturnStack.pop();
+    }
+    
+    WigglerContext.avoidInfiniteHookLoop = false;
 }
 
 // Clear us up and unload Python.

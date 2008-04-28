@@ -195,6 +195,49 @@ wpy_jump(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+// Call a subroutine.
+static PyObject*
+wpy_call(PyObject *self, PyObject *args, PyObject *kws) {
+    uint32 address;
+    PyObject* callback = NULL;
+    PyObject* memory = NULL;
+    PyObject* index = NULL;
+    char* words[] = {"address", "callback", "memory_flag", "index_flag", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kws, "I|OOO", words, &address, &callback, &memory, &index))
+        return NULL;
+    if (callback != NULL && !PyCallable_Check(callback)) {
+        PyErr_SetString(PyExc_TypeError, "parameter must be callable");
+        return NULL;
+    }
+    
+    SReturnData newrdata;
+    Py_XINCREF(callback);
+    newrdata.callback = callback;
+    newrdata.bank = Registers.PB;
+    newrdata.addr = Registers.PCw;
+    newrdata.flags = Registers.P.W;
+    newrdata.count = 1;
+    WigglerContext.ReturnStack.push(newrdata);
+    
+    if (memory) {
+        if (PyObject_IsTrue(memory))
+            SetMemory();
+        else
+            ClearMemory();
+    }
+    if (index) {
+        if (PyObject_IsTrue(index))
+            SetIndex();
+        else
+            ClearIndex();
+    }
+    
+    Registers.PCw = address & 0xFFFF;
+    Registers.PB = address >> 16;
+    
+    Py_RETURN_NONE;
+}
+
 // Return from subroutine
 static PyObject*
 wpy_short_return(PyObject *self, PyObject *args) {
@@ -205,6 +248,8 @@ wpy_short_return(PyObject *self, PyObject *args) {
     //AddCycles(ONE_CYCLE);
     Registers.PCw++;
     S9xSetPCBase (Registers.PBPC);
+    
+    WigglerContext.avoidInfiniteHookLoop = false;
     
     Py_RETURN_NONE;
 }
@@ -219,6 +264,8 @@ wpy_long_return(PyObject *self, PyObject *args) {
     Registers.SH = 1;
     Registers.PCw++;
     S9xSetPCBase(Registers.PBPC);
+    
+    WigglerContext.avoidInfiniteHookLoop = false;
     
     Py_RETURN_NONE;
 }
@@ -251,6 +298,8 @@ static PyMethodDef mod_wiggler[] = {
     
     {"jump", wpy_jump, METH_VARARGS,
      "jump(address)\nJumps to an arbitrary address."},
+    {"call", (PyCFunction)wpy_call, METH_VARARGS|METH_KEYWORDS,
+     "call(address[, callback])\nJump to a subroutine, and call the callback when it returns.\nUse with care!"},
     {"short_return", wpy_short_return, METH_NOARGS,
      "short_return()\nReturns from a subroutine."},
     {"long_return", wpy_long_return, METH_NOARGS,
