@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "wiggler9x.h"
 #include "snes9x.h"
@@ -32,6 +33,7 @@ void Wiggler_CheckForPyScript(const char *rom_filename) {
     if (WigglerContext.filename)
         free(WigglerContext.filename); //just in case...
     WigglerContext.filename = (char*)malloc(strlen(fname)+1);
+    chdir(dir);
     strcpy(WigglerContext.filename, fname);
 }
 
@@ -45,7 +47,9 @@ void Wiggler_HardReset() {
 
 // Initializes Python and loads the script.
 void Wiggler_PyInit() {
+    char *argv[] = {WigglerContext.filename, NULL};
     Py_InitializeEx(0);
+    PySys_SetArgv(1, argv);
     initwiggler();
     
     FILE* pyscript_file  = NULL;
