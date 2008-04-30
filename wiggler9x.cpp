@@ -16,6 +16,18 @@ void Wiggler_ClearContext();
 void Wiggler_Finalize();
 // end private API
 
+inline int PythonCall(PyObject* callable) {
+    if (!callable)
+        return -1;
+
+    PyObject_CallObject(callable, NULL);
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+        return -1;
+    }
+    return 0;
+}
+
 // Finds a python script in the same directory as the ROM, then copies the filename to context.
 // Called first by Memory.LoadROM.
 // NOT called by LoadMultiCart, LoadSufamiTurbo, or LoadSameGame.
@@ -66,25 +78,23 @@ void Wiggler_PyInit() {
 
 // The screen has refreshed. Called by S9xEndScreenRefresh in gfx.cpp
 void Wiggler_Refresh() {
-    if (WigglerContext.refreshCallback != NULL)
-        PyObject_CallObject(WigglerContext.refreshCallback, NULL);
+    PythonCall(WigglerContext.refreshCallback);
 }
 
 // Spring a trap.
 void Wiggler_Trap(uint32 address) {
-    if (WigglerContext.TrapMap.count(address))
-        PyObject_CallObject(WigglerContext.TrapMap[address], NULL);
+    PythonCall(WigglerContext.TrapMap[address]);
 }
 
 // Opcodes.
 void Wiggler_WDMJSR(unsigned char address) {
-    if ((WigglerContext.PyRoutines.size() > address) && (WigglerContext.PyRoutines[address] != NULL))
-        PyObject_CallObject(WigglerContext.PyRoutines[address], NULL);
+    if (WigglerContext.PyRoutines.size() > address)
+        PythonCall(WigglerContext.PyRoutines[address]);
     // else crash?
 }
 void Wiggler_WDMJSL(unsigned short address) {
-    if ((WigglerContext.PyRoutines.size() > address) && (WigglerContext.PyRoutines[address] != NULL))
-        PyObject_CallObject(WigglerContext.PyRoutines[address], NULL);
+    if (WigglerContext.PyRoutines.size() > address)
+        PythonCall(WigglerContext.PyRoutines[address]);
     // else crash?
 }
 
@@ -94,7 +104,7 @@ void Wiggler_SubReturnB() {
     Registers.PCw = rdat.addr;
     Registers.P.W = rdat.flags;
     if (rdat.callback) {
-        PyObject_CallObject(rdat.callback, NULL);
+        PythonCall(rdat.callback);
         Py_CLEAR(rdat.callback);
     }
     WigglerContext.ReturnStack.pop();
