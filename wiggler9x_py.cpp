@@ -205,27 +205,34 @@ wpy_call(PyObject *self, PyObject *args, PyObject *kws) {
     char* words[] = {"address", "callback", "memory_flag", "index_flag", NULL};
     if (!PyArg_ParseTupleAndKeywords(args, kws, "I|OOO", words, &address, &callback, &memory, &index))
         return NULL;
-    if (callback != NULL && !PyCallable_Check(callback)) {
-        PyErr_SetString(PyExc_TypeError, "parameter must be callable");
-        return NULL;
-    }
     
     SReturnData newrdata;
-    Py_XINCREF(callback);
-    newrdata.callback = callback;
+    
+    if (callback != NULL && callback != Py_None) {
+        if (PyCallable_Check(callback)) {
+            Py_INCREF(callback);
+            newrdata.callback = callback;
+        } else {
+            PyErr_SetString(PyExc_TypeError, "parameter must be callable");
+            return NULL;
+        }
+    } else {
+        newrdata.callback = NULL;
+    }
+    
     newrdata.bank = Registers.PB;
     newrdata.addr = Registers.PCw;
     newrdata.flags = Registers.P.W;
     newrdata.count = 1;
     WigglerContext.ReturnStack.push(newrdata);
     
-    if (memory) {
+    if (memory && memory != Py_None) {
         if (PyObject_IsTrue(memory))
             SetMemory();
         else
             ClearMemory();
     }
-    if (index) {
+    if (index && index != Py_None) {
         if (PyObject_IsTrue(index))
             SetIndex();
         else
