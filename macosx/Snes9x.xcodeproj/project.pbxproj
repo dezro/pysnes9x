@@ -13,9 +13,9 @@
 		559216F90DB64B70009F76F7 /* wiggler9x.h in Headers */ = {isa = PBXBuildFile; fileRef = 559216F50DB64B70009F76F7 /* wiggler9x.h */; };
 		559216FA0DB64B70009F76F7 /* wiggler9x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559216F40DB64B70009F76F7 /* wiggler9x.cpp */; };
 		559216FB0DB64B70009F76F7 /* wiggler9x.h in Headers */ = {isa = PBXBuildFile; fileRef = 559216F50DB64B70009F76F7 /* wiggler9x.h */; };
-		559224340DB65348009F76F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 559224330DB65348009F76F7 /* Python.framework */; };
-		559224350DB65348009F76F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 559224330DB65348009F76F7 /* Python.framework */; };
-		559224360DB65348009F76F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 559224330DB65348009F76F7 /* Python.framework */; };
+		55A090CE0E9D63ED00B45734 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55A090CD0E9D63ED00B45734 /* Python.framework */; };
+		55A090CF0E9D63ED00B45734 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55A090CD0E9D63ED00B45734 /* Python.framework */; };
+		55A090D00E9D63ED00B45734 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55A090CD0E9D63ED00B45734 /* Python.framework */; };
 		55A4BE850DBB772100F3F58D /* wiggler9x_py.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A4BE840DBB772100F3F58D /* wiggler9x_py.cpp */; };
 		55A4BE860DBB772100F3F58D /* wiggler9x_py.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A4BE840DBB772100F3F58D /* wiggler9x_py.cpp */; };
 		55A4BE870DBB772100F3F58D /* wiggler9x_py.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A4BE840DBB772100F3F58D /* wiggler9x_py.cpp */; };
@@ -706,7 +706,7 @@
 		20286C33FDCF999611CA2CEA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		559216F40DB64B70009F76F7 /* wiggler9x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wiggler9x.cpp; sourceTree = "<group>"; };
 		559216F50DB64B70009F76F7 /* wiggler9x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wiggler9x.h; sourceTree = "<group>"; };
-		559224330DB65348009F76F7 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Python.framework; sourceTree = "<group>"; };
+		55A090CD0E9D63ED00B45734 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = /System/Library/Frameworks/Python.framework; sourceTree = "<absolute>"; };
 		55A4BE840DBB772100F3F58D /* wiggler9x_py.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wiggler9x_py.cpp; sourceTree = "<group>"; };
 		EA00D01D0A5A9956000C58E0 /* logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = logger.cpp; sourceTree = "<group>"; };
 		EA00D01F0A5A998F000C58E0 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
@@ -755,9 +755,9 @@
 		EA3D300A0A260A3200BDACCC /* musicbox_indicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = musicbox_indicator.png; sourceTree = "<group>"; };
 		EA3D300B0A260A3200BDACCC /* logo_freeze.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_freeze.png; sourceTree = "<group>"; };
 		EA3D300C0A260A3200BDACCC /* logo_defrost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_defrost.png; sourceTree = "<group>"; };
-		EA3D301A0A260A4D00BDACCC /* Info-Snes9x_gcc4_x86.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Info-Snes9x_gcc4_x86.plist"; sourceTree = "<group>"; };
-		EA3D301B0A260A4D00BDACCC /* Info-Snes9x_gcc4_ppc.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Info-Snes9x_gcc4_ppc.plist"; sourceTree = "<group>"; };
-		EA3D301C0A260A4D00BDACCC /* Info-Snes9x.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Info-Snes9x.plist"; sourceTree = "<group>"; };
+		EA3D301A0A260A4D00BDACCC /* Info-Snes9x_gcc4_x86.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Snes9x_gcc4_x86.plist"; sourceTree = "<group>"; };
+		EA3D301B0A260A4D00BDACCC /* Info-Snes9x_gcc4_ppc.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Snes9x_gcc4_ppc.plist"; sourceTree = "<group>"; };
+		EA3D301C0A260A4D00BDACCC /* Info-Snes9x.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Snes9x.plist"; sourceTree = "<group>"; };
 		EA4C4A21063418FC00A3C79D /* dsp4emu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = dsp4emu.c; sourceTree = "<group>"; };
 		EA5723F8092778C100D1DCD8 /* Snes9x_gcc4_ppc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Snes9x_gcc4_ppc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA6E6C0E08F9734500CB3555 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
@@ -952,7 +952,7 @@
 				EA14D74A085C31BA000B8390 /* IOKit.framework in Frameworks */,
 				EA3D2F620A26085800BDACCC /* libz_u.a in Frameworks */,
 				EA3D2F640A26085800BDACCC /* libHIDUtilities_u.a in Frameworks */,
-				559224340DB65348009F76F7 /* Python.framework in Frameworks */,
+				55A090CE0E9D63ED00B45734 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -972,7 +972,7 @@
 				EA5723EE092778C100D1DCD8 /* IOKit.framework in Frameworks */,
 				EA3D2F5E0A26085800BDACCC /* libz_u.a in Frameworks */,
 				EA3D2F600A26085800BDACCC /* libHIDUtilities_u.a in Frameworks */,
-				559224350DB65348009F76F7 /* Python.framework in Frameworks */,
+				55A090CF0E9D63ED00B45734 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -992,7 +992,7 @@
 				EAA3DA26056F245B002B8BB2 /* IOKit.framework in Frameworks */,
 				EA3D2F5B0A26085800BDACCC /* libz.a in Frameworks */,
 				EA3D2F5D0A26085800BDACCC /* libHIDUtilities.a in Frameworks */,
-				559224360DB65348009F76F7 /* Python.framework in Frameworks */,
+				55A090D00E9D63ED00B45734 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1030,7 +1030,7 @@
 		20286C32FDCF999611CA2CEA /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				559224330DB65348009F76F7 /* Python.framework */,
+				55A090CD0E9D63ED00B45734 /* Python.framework */,
 				20286C33FDCF999611CA2CEA /* Carbon.framework */,
 				EA0C95D808364AAE009307B4 /* Foundation.framework */,
 				EA85C2AC0B4ECA8300F5F9C9 /* AppKit.framework */,
@@ -2156,7 +2156,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "Info-Snes9x_gcc4_x86.plist";
 				LIBRARY_SEARCH_PATHS = .;
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -2165,7 +2165,7 @@
 				PER_ARCH_CFLAGS_i386 = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = Snes9x_gcc4_x86;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wfloat-equal",
@@ -2211,7 +2211,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "Info-Snes9x_gcc4_x86.plist";
 				LIBRARY_SEARCH_PATHS = .;
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = (
 					"-fomit-frame-pointer",
 					"-fast",
@@ -2223,7 +2223,7 @@
 				PER_ARCH_CFLAGS_i386 = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = Snes9x_gcc4_x86;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wfloat-equal",
@@ -2268,7 +2268,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "Info-Snes9x_gcc4_ppc.plist";
 				LIBRARY_SEARCH_PATHS = .;
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -2277,7 +2277,7 @@
 				PER_ARCH_CFLAGS_ppc = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = Snes9x_gcc4_ppc;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wfloat-equal",
@@ -2323,7 +2323,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "Info-Snes9x_gcc4_ppc.plist";
 				LIBRARY_SEARCH_PATHS = .;
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = (
 					"-fomit-frame-pointer",
 					"-fast",
@@ -2335,7 +2335,7 @@
 				PER_ARCH_CFLAGS_ppc = "-mcpu=G4";
 				PREBINDING = NO;
 				PRODUCT_NAME = Snes9x_gcc4_ppc;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wfloat-equal",
@@ -2387,7 +2387,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "Info-Snes9x.plist";
 				LIBRARY_SEARCH_PATHS = .;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -2446,7 +2446,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "Info-Snes9x.plist";
 				LIBRARY_SEARCH_PATHS = .;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = (
 					"-fomit-frame-pointer",
 					"-falign-loops-max-skip=15",

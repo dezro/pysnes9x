@@ -176,6 +176,8 @@
 #ifndef _mac_audio_h_
 #define _mac_audio_h_
 
+#import <AudioUnit/AudioUnitCarbonView.h>
+
 void InitMacSound(void);
 void DeinitMacSound(void);
 void MacStartSound(void);

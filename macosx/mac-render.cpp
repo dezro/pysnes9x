@@ -350,7 +350,7 @@ static CGLContextObj		glContext;
 static AGLContext			agContext;
 static CGLPixelFormatObj	cglpix;
 static AGLPixelFormat		aglpix;
-static long					glSwapInterval    = 0;
+static GLint					glSwapInterval    = 0;
 static GLint				agSwapInterval    = 0;
 static CFDictionaryRef		oldDisplayMode;
 static CGImageRef			cgGameImage       = nil,
@@ -981,7 +981,7 @@ static void S9xDeinitDirectWindowMode(void)
 static void S9xInitOpenGLFullScreen(void)
 {
 	CGOpenGLDisplayMask	displayMask;
-	long 				numPixelFormats;
+	GLint			numPixelFormats;
 
 	displayMask = CGDisplayIDToOpenGLDisplayMask(gGameDisplayID);
 	CGLPixelFormatAttribute	attribs[] = { (CGLPixelFormatAttribute) kCGLPFAFullScreen,
