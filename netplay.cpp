@@ -178,11 +178,6 @@
 	#include <winsock.h>
 	#include <process.h>
 	#include "win32/wsnes9x.h"
-
-	#define ioctl ioctlsocket
-	#define close closesocket
-	#define read(a,b,c) recv(a, b, c, 0)
-	#define write(a,b,c) send(a, b, c, 0)
 #else
 	#include <unistd.h>
 	#include <sys/time.h>
@@ -213,6 +208,13 @@
 #include "memmap.h"
 #include "snapshot.h"
 #include "display.h"
+
+#ifdef __WIN32__
+	#define ioctl ioctlsocket
+	#define close closesocket
+	#define read(a,b,c) recv(a, b, c, 0)
+	#define write(a,b,c) send(a, b, c, 0)
+#endif
 
 void S9xNPClientLoop (void *);
 bool8 S9xNPLoadROM (uint32 len);

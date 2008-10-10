@@ -1,8 +1,8 @@
-#include "wiggler9x.h"
 #include <map> // registerhack
 #include <vector> // subroutine
 
 #include "snes9x.h"
+#include "wiggler9x.h"
 #include "memmap.h" // peek, poke, push, pull
 #include "controls.h" // poll
 #include "display.h" // inform
@@ -116,7 +116,7 @@ wpy_poke(PyObject *self, PyObject *args) {
 uint16 MovieGetJoypad(int i);
 static PyObject*
 wpy_poll(PyObject *self, PyObject *args) {
-    uint player;
+    unsigned int player;
     if (!PyArg_ParseTuple(args, "I", &player))
         return NULL;
     if (player > 7) {
@@ -131,7 +131,7 @@ wpy_poll(PyObject *self, PyObject *args) {
 // I mean, don't want to leave the touch-screen and Mac users in the dark
 static PyObject*
 wpy_poll_mouse(PyObject *self, PyObject *args) {
-    uint player = 0;
+    unsigned int player = 0;
     uint32 pid = 0x82200000;
     uint32 bid = 0x82100000;
     int16 x, y;

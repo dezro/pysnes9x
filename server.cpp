@@ -180,12 +180,6 @@
 	#include <winsock.h>
 	#include <process.h>
 	#include "win32/wsnes9x.h"
-	#define ioctl ioctlsocket
-	#define close closesocket
-	#define read(a,b,c) recv(a, b, c, 0)
-	#define write(a,b,c) send(a, b, c, 0)
-	#define gettimeofday(a,b) S9xGetTimeOfDay (a)
-	#define exit(a) _endthread()
 	void S9xGetTimeOfDay (struct timeval *n);
 #else
 	#include <unistd.h>
@@ -213,6 +207,15 @@
 #define NP_ONE_CLIENT 1
 #else
 #define NP_ONE_CLIENT 0
+#endif
+
+#ifdef __WIN32__
+	#define ioctl ioctlsocket
+	#define close closesocket
+	#define read(a,b,c) recv(a, b, c, 0)
+	#define write(a,b,c) send(a, b, c, 0)
+	#define gettimeofday(a,b) S9xGetTimeOfDay (a)
+	#define exit(a) _endthread()
 #endif
 
 struct SNPServer NPServer;

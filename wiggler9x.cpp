@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "wiggler9x.h"
 #include "snes9x.h"
+#include "wiggler9x.h"
 #include "display.h" // inform
 #include "65c816.h"
 
@@ -64,16 +64,17 @@ void Wiggler_PyInit() {
     PySys_SetArgv(1, argv);
     initwiggler();
     
-    FILE* pyscript_file  = NULL;
-    if ((pyscript_file = fopen(WigglerContext.filename, "r")))
+    PyObject* pyscript_fobj;
+    if ((pyscript_fobj = PyFile_FromString(WigglerContext.filename, "r")))
     {
         printf ("Using Python script %s\n", WigglerContext.filename); //todo: maybe move this to screen?
-        if (PyRun_AnyFile(pyscript_file, WigglerContext.filename) == 0) //success
+        FILE* f = PyFile_AsFile(pyscript_fobj);
+        if (PyRun_AnyFileEx(f, WigglerContext.filename, 1) == 0) //success
             WigglerContext.loaded = true;
         else
             Wiggler_ClearContext();
-        fclose(pyscript_file);
     }
+    Py_CLEAR(pyscript_fobj);
 }
 
 // The screen has refreshed. Called by S9xEndScreenRefresh in gfx.cpp
