@@ -126,6 +126,7 @@ wpy_poll(PyObject *self, PyObject *args) {
     return Py_BuildValue("I", MovieGetJoypad(player));
 }
 
+#if 0
 // wiggler.poll_mouse returns the current x and y location of the mouse as well as the button state
 // only the left button is supported (for possibly misguided compatibility reasons)
 // I mean, don't want to leave the touch-screen and Mac users in the dark
@@ -156,6 +157,7 @@ wpy_poll_mouse(PyObject *self, PyObject *args) {
     S9xPollButton(bid, &pressed);
     return Py_BuildValue("hhB", x, y, pressed);
 }
+#endif
 
 // wiggler.inform displays the passed string
 static PyObject*
@@ -297,8 +299,10 @@ static PyMethodDef mod_wiggler[] = {
     
     {"poll", wpy_poll, METH_VARARGS,
      "poll(player) -> buttons\nPoll the player's controller."},
+#if 0
     {"poll_mouse", wpy_poll_mouse, METH_VARARGS,
      "poll_mouse(player) -> (x,y)\nPoll the player's mouse."},
+#endif
     
     {"inform", wpy_inform, METH_VARARGS,
      "inform(string)\nDisplays the string."},

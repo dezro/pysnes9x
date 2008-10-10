@@ -850,38 +850,38 @@ static pascal OSStatus SubEventHandler(EventHandlerCallRef inHandlerCallRef, Eve
 		case kEventClassMouse:
 			if (fullscreen)
 			{
-                // if ((macControllerOption == SNES_JOYPAD) || (macControllerOption == SNES_MULTIPLAYER5) || (macControllerOption == SNES_MULTIPLAYER5_2))
-                // {
-                // #ifdef MAC_NETPLAY_SUPPORT
-                //  if (!(Settings.NetPlay && !Settings.NetPlayServer))
-                //  {
-                // #endif
-                //      switch (GetEventKind(inEvent))
-                //      {
-                //          case kEventMouseUp:
-                //              HIPoint hipt;
-                // 
-                //              err = GetEventParameter(inEvent, kEventParamMouseLocation, typeHIPoint, nil, sizeof(HIPoint), nil, &hipt);
-                //              if (err == noErr)
-                //              {
-                //                  if (CGRectContainsPoint(glScreenBounds, hipt))
-                //                  {
-                //                      printf("Exiting from fullscreen...\n");
-                // 
-                //                      running = false;
-                //                      while (s9xthreadrunning)
-                //                          sleep(0);
-                //                      QuitApplicationEventLoop();
-                //                      result = noErr;
-                //                  }
-                //              }
-                //      }
-                // #ifdef MAC_NETPLAY_SUPPORT
-                //  }
-                // #endif
-                // }
-                // else
-                // if ((macControllerOption == SNES_MOUSE) || (macControllerOption == SNES_MOUSE_SWAPPED))
+                if ((macControllerOption == SNES_JOYPAD) || (macControllerOption == SNES_MULTIPLAYER5) || (macControllerOption == SNES_MULTIPLAYER5_2))
+                {
+                #ifdef MAC_NETPLAY_SUPPORT
+                 if (!(Settings.NetPlay && !Settings.NetPlayServer))
+                 {
+                #endif
+                     switch (GetEventKind(inEvent))
+                     {
+                         case kEventMouseUp:
+                             HIPoint hipt;
+                
+                             err = GetEventParameter(inEvent, kEventParamMouseLocation, typeHIPoint, nil, sizeof(HIPoint), nil, &hipt);
+                             if (err == noErr)
+                             {
+                                 if (CGRectContainsPoint(glScreenBounds, hipt))
+                                 {
+                                     printf("Exiting from fullscreen...\n");
+                
+                                     running = false;
+                                     while (s9xthreadrunning)
+                                         sleep(0);
+                                     QuitApplicationEventLoop();
+                                     result = noErr;
+                                 }
+                             }
+                     }
+                #ifdef MAC_NETPLAY_SUPPORT
+                 }
+                #endif
+                }
+                else
+                if ((macControllerOption == SNES_MOUSE) || (macControllerOption == SNES_MOUSE_SWAPPED))
 				{
 					switch (GetEventKind(inEvent))
 					{
