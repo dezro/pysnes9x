@@ -69,7 +69,7 @@ void Wiggler_PyInit() {
     {
         printf ("Using Python script %s\n", WigglerContext.filename); //todo: maybe move this to screen?
         FILE* f = PyFile_AsFile(pyscript_fobj);
-        if (PyRun_AnyFileEx(f, WigglerContext.filename, 1) == 0) //success
+        if (PyRun_AnyFile(f, WigglerContext.filename) == 0) //success
             WigglerContext.loaded = true;
         else
             Wiggler_ClearContext();
