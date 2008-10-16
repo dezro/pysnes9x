@@ -513,7 +513,7 @@ bool8 S9xDoScreenshot(int width, int height)
 	image = CreateGameScreenCGImage();
 	if (image)
 	{
-		r = CreateResizedBitmapAndCGImage(image, &resizedImage, &bitmap, size, (CGImageAlphaInfo) (kCGImageAlphaNoneSkipFirst | ((systemVersion >= 0x1040) ? kCGBitmapByteOrderDefault : 0)), 16, false);
+		r = CreateResizedBitmapAndCGImage(image, &resizedImage, &bitmap, size, (CGImageAlphaInfo) (kCGImageAlphaNoneSkipFirst | ((systemVersion >= 0x1040) ? kCGBitmapByteOrder16Host : 0)), 16, false);
 		if (r)
 		{
 			ExportCGImageToPNGFile(resizedImage, S9xGetPNGFilename());
