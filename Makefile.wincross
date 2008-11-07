@@ -1,0 +1,222 @@
+CROSS=yes
+
+ASM=nasm
+OBJFIX=../Windows/bin/objfix.exe
+
+CFLAGSORIG=-Wall -I../Windows/zlib/include -I../Windows/libpng/include -I../Windows/Python25/include \
+	-I../Windows/ddraw_include \
+	-DSPC700_SHUTDOWN -DNETPLAY_SUPPORT \
+	-DCPU_SHUTDOWN -DZLIB -DVAR_CYCLES -DEXECUTE_SUPERFX_PER_LINE -D__WIN32__ -DUSE_OPENGL \
+	-DUNZIP_SUPPORT -DHAVE_LIBPNG -DSDD1_DECOMP -DCORRECT_VRAM_READS -DNEW_COLOUR_BLENDING \
+	-DWIN32 -D_WINDOWS -DSPC700_C -DJMA_SUPPORT -DZSNES_FX -DZSNES_C4 -DHAVE_STDINT_H \
+	-D_WIN32_IE=0x0501 -DFMOD_SUPPORT -I../Windows/FMOD/api/inc
+#-DUSE_GLIDE
+
+
+ifeq (${DEBUG},yes)
+CFLAGS= ${CFLAGSORIG} -ggdb3
+else
+CFLAGS= ${CFLAGSORIG} -O3 -DNDEBUG
+endif
+
+
+ifeq (${CROSS},yes)
+CC=/usr/local/i386-mingw32-3.4.5/bin/i386-mingw32-gcc
+CPPC=/usr/local/i386-mingw32-3.4.5/bin/i386-mingw32-g++
+WINDRES=/usr/local/i386-mingw32-3.4.5/bin/i386-mingw32-windres
+DEL=rm -f
+SLASH=/
+else
+CC=gcc
+CPPC=g++
+WINDRES=windres
+DEL=del
+SLASH=\${blahblahblahblah}
+endif
+
+LINK=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid \
+	-lodbc32 -lodbccp32 -lz -lpng -lcomctl32 -lwinmm -lopengl32 -lglu32 -lwsock32 -lddraw -ldsound \
+	-ldxguid -lvfw32 -lpython25 -mwindows \
+	-L../Windows/zlib/lib -L../Windows/libpng/lib -L../Windows/Python25/libs \
+	-L../Windows/FMOD/api/lib -lfmodvc 
+#-lglide2x -ldelayimp
+
+OBJS= ../Windows/obj/2xsai.obj ../Windows/obj/apu.obj ../Windows/obj/apudebug.obj \
+	../Windows/obj/bsx.obj ../Windows/obj/c4.obj ../Windows/obj/c4emu.obj ../Windows/obj/cheats.obj \
+	../Windows/obj/cheats2.obj ../Windows/obj/clip.obj ../Windows/obj/conffile.obj \
+	../Windows/obj/controls.obj ../Windows/obj/cpu.obj ../Windows/obj/cpuexec.obj \
+	../Windows/obj/cpuops.obj ../Windows/obj/crosshairs.obj ../Windows/obj/data.obj \
+	../Windows/obj/debug.obj ../Windows/obj/dma.obj ../Windows/obj/dsp1.obj ../Windows/obj/fxdbg.obj \
+	../Windows/obj/fxemu.obj ../Windows/obj/fxinst.obj ../Windows/obj/gfx.obj \
+	../Windows/obj/globals.obj ../Windows/obj/loadzip.obj ../Windows/obj/logger.obj \
+	../Windows/obj/memmap.obj ../Windows/obj/movie.obj ../Windows/obj/netplay.obj \
+	../Windows/obj/obc1.obj ../Windows/obj/ppu.obj ../Windows/obj/reader.obj ../Windows/obj/sa1.obj \
+	../Windows/obj/sa1cpu.obj ../Windows/obj/screenshot.obj ../Windows/obj/sdd1.obj \
+	../Windows/obj/sdd1emu.obj ../Windows/obj/server.obj ../Windows/obj/seta.obj \
+	../Windows/obj/seta010.obj ../Windows/obj/seta011.obj ../Windows/obj/seta018.obj \
+	../Windows/obj/snaporig.obj ../Windows/obj/snapshot.obj ../Windows/obj/snes9x.obj \
+	../Windows/obj/sound.obj ../Windows/obj/soundux.obj ../Windows/obj/spc700.obj \
+	../Windows/obj/spc7110.obj ../Windows/obj/srtc.obj ../Windows/obj/tile.obj \
+	../Windows/obj/unzip/unreduce.obj ../Windows/obj/i386/ZSNES.obj ../Windows/obj/i386/fxemu2b.obj \
+	../Windows/obj/i386/fxtable.obj ../Windows/obj/i386/fxemu2.obj ../Windows/obj/i386/fxemu2c.obj \
+	../Windows/obj/i386/sfxproc.obj ../Windows/obj/i386/SPC.obj ../Windows/obj/i386/zsnesc4.obj \
+	../Windows/obj/i386/C4.obj ../Windows/obj/i386/2XSAIMMX.obj ../Windows/obj/i386/bilinear.obj \
+	../Windows/obj/jma/7zlzma.obj ../Windows/obj/jma/crc32.obj ../Windows/obj/jma/iiostrm.obj \
+	../Windows/obj/jma/inbyte.obj ../Windows/obj/jma/jma.obj ../Windows/obj/jma/lzma.obj \
+	../Windows/obj/jma/lzmadec.obj ../Windows/obj/jma/s9x-jma.obj ../Windows/obj/jma/winout.obj \
+	../Windows/obj/unzip/unshrink.obj ../Windows/obj/unzip/unzip.obj ../Windows/obj/unzip/explode.obj \
+	../Windows/obj/win32/auxmath.obj ../Windows/obj/win32/AVIOutput.obj \
+	../Windows/obj/win32/directx.obj ../Windows/obj/win32/InputCustom.obj \
+	../Windows/obj/win32/render.obj ../Windows/obj/win32/win32.obj ../Windows/obj/win32/wconfig.obj \
+	../Windows/obj/win32/wsnes9x.obj ../Windows/obj/win32/snes9x.obj \
+	../Windows/obj/wiggler9x_py.obj ../Windows/obj/wiggler9x.obj
+
+#adler32.obj compress.obj deflate.obj emucrc32.obj gzio.obj infback.obj \
+#inffast.obj inflate.obj inftrees.obj minigzip.obj trees.obj uncompr.obj zutil.obj
+#png.obj pngerror.obj pnggccrd.obj pngget.obj pngmem.obj \
+#pngpread.obj pngread.obj pngrio.obj pngrtran.obj pngrutil.obj pngset.obj pngtrans.obj \
+#pngvcrd.obj pngwio.obj pngwrite.obj pngwtran.obj pngwutil.obj
+
+.SUFFIXES: .c .cpp .asm .ASM
+
+../Windows/obj/%.obj: %.c
+	${CC} ${CFLAGS} -o $@ -c $<
+
+../Windows/obj/%.obj: %.cpp
+	${CPPC} ${CFLAGS} -o $@ -c $<
+
+../Windows/obj/%.obj: %.asm
+	${ASM} -d__DJGPP__=1 -dZSNES_FX -f win32 -i . -i i386 -o $@ $<
+	${OBJFIX} $@
+
+../Windows/obj/%.obj: %.ASM
+	${ASM} -d__DJGPP__=1 -dZSNES_FX -f win32 -i . -i i386 -o $@ $<
+	${OBJFIX} $@
+
+all: ${OBJFIX} ${OBJS}
+ifeq (${DEBUG},yes)
+	${CPPC} -ggdb3 -o../Windows/bin/snes9x-debug.exe ${OBJS} ${LINK}
+else
+	${CPPC} -s -o../Windows/bin/snes9x.exe ${OBJS} ${LINK}
+endif
+
+${OBJFIX}: win32/objfix.c
+	gcc -O3 -s -o $@ win32/objfix.c
+../Windows/obj/2xsai.obj: 2xsai.cpp
+../Windows/obj/apu.obj: apu.cpp
+../Windows/obj/apudebug.obj: apudebug.cpp
+../Windows/obj/bsx.obj: bsx.cpp
+../Windows/obj/c4.obj: c4.cpp
+../Windows/obj/c4emu.obj: c4emu.cpp
+../Windows/obj/cheats.obj: cheats.cpp
+../Windows/obj/cheats2.obj: cheats2.cpp
+../Windows/obj/clip.obj: clip.cpp
+../Windows/obj/conffile.obj: conffile.cpp
+../Windows/obj/controls.obj: controls.cpp
+../Windows/obj/cpu.obj: cpu.cpp
+../Windows/obj/cpuexec.obj: cpuexec.cpp
+../Windows/obj/cpuops.obj: cpuops.cpp
+../Windows/obj/crosshairs.obj: crosshairs.cpp
+../Windows/obj/data.obj: data.cpp
+../Windows/obj/debug.obj: debug.cpp
+../Windows/obj/dma.obj: dma.cpp
+../Windows/obj/dsp1.obj: dsp1.cpp
+../Windows/obj/fxdbg.obj: fxdbg.cpp
+../Windows/obj/fxemu.obj: fxemu.cpp
+../Windows/obj/fxinst.obj: fxinst.cpp
+../Windows/obj/gfx.obj: gfx.cpp
+../Windows/obj/globals.obj: globals.cpp
+../Windows/obj/loadzip.obj: loadzip.cpp
+../Windows/obj/logger.obj: logger.cpp
+../Windows/obj/memmap.obj: memmap.cpp
+../Windows/obj/movie.obj: movie.cpp
+../Windows/obj/netplay.obj: netplay.cpp
+../Windows/obj/obc1.obj: obc1.cpp
+../Windows/obj/ppu.obj: ppu.cpp
+../Windows/obj/reader.obj: reader.cpp
+../Windows/obj/sa1.obj: sa1.cpp
+../Windows/obj/sa1cpu.obj: sa1cpu.cpp
+../Windows/obj/screenshot.obj: screenshot.cpp
+../Windows/obj/sdd1.obj: sdd1.cpp
+../Windows/obj/sdd1emu.obj: sdd1emu.cpp
+../Windows/obj/server.obj: server.cpp
+../Windows/obj/seta.obj: seta.cpp
+../Windows/obj/seta010.obj: seta010.cpp
+../Windows/obj/seta011.obj: seta011.cpp
+../Windows/obj/seta018.obj: seta018.cpp
+../Windows/obj/snaporig.obj: snaporig.cpp
+../Windows/obj/snapshot.obj: snapshot.cpp
+../Windows/obj/snes9x.obj: snes9x.cpp
+../Windows/obj/sound.obj: sound.cpp
+../Windows/obj/soundux.obj: soundux.cpp
+../Windows/obj/spc700.obj: spc700.cpp
+../Windows/obj/spc7110.obj: spc7110.cpp
+../Windows/obj/srtc.obj: srtc.cpp
+../Windows/obj/tile.obj: tile.cpp
+../Windows/obj/unzip/unreduce.obj: unzip/unreduce.c
+../Windows/obj/unzip/unshrink.obj: unzip/unshrink.c
+../Windows/obj/unzip/unzip.obj: unzip/unzip.c
+../Windows/obj/unzip/explode.obj: unzip/explode.c
+../Windows/obj/jma/7zlzma.obj: jma/7zlzma.cpp
+../Windows/obj/jma/crc32.obj: jma/crc32.cpp
+../Windows/obj/jma/iiostrm.obj: jma/iiostrm.cpp
+../Windows/obj/jma/inbyte.obj: jma/inbyte.cpp
+../Windows/obj/jma/jma.obj: jma/jma.cpp
+../Windows/obj/jma/lzma.obj: jma/lzma.cpp
+../Windows/obj/jma/lzmadec.obj: jma/lzmadec.cpp
+../Windows/obj/jma/s9x-jma.obj: jma/s9x-jma.cpp
+../Windows/obj/jma/winout.obj: jma/winout.cpp
+../Windows/obj/win32/auxmath.obj: win32/auxmath.cpp
+../Windows/obj/win32/AVIOutput.obj: win32/AVIOutput.cpp
+../Windows/obj/win32/directx.obj: win32/directx.cpp
+../Windows/obj/win32/InputCustom.obj: win32/InputCustom.cpp
+../Windows/obj/win32/render.obj: win32/render.cpp
+../Windows/obj/win32/wconfig.obj: win32/wconfig.cpp
+../Windows/obj/win32/win32.obj: win32/win32.cpp
+../Windows/obj/win32/wsnes9x.obj: win32/wsnes9x.cpp
+../Windows/obj/win32/snes9x.obj: win32/rsrc/snes9x.rc
+	${WINDRES} --include-dir win32/rsrc --language=0x413 -D_WIN32_IE=0x0501 win32/rsrc/snes9x.rc -o../Windows/obj/win32/snes9x.obj
+#--language=0x809
+
+../Windows/obj/wiggler9x_py.obj: wiggler9x_py.cpp
+../Windows/obj/wiggler9x.obj: wiggler9x.cpp
+
+#adler32.obj: ../zlib/adler32.c
+#compress.obj: ../zlib/compress.c
+#deflate.obj: ../zlib/deflate.c
+#emucrc32.obj: ../zlib/emucrc32.c
+#gzio.obj: ../zlib/gzio.c
+#infback.obj: ../zlib/infback.c
+#inffast.obj: ../zlib/inffast.c
+#inflate.obj: ../zlib/inflate.c
+#inftrees.obj: ../zlib/inftrees.c
+#minigzip.obj: ../zlib/minigzip.c
+#trees.obj: ../zlib/trees.c
+#uncompr.obj: ../zlib/uncompr.c
+#zutil.obj: ../zlib/zutil.c
+
+#png.obj: ../libpng/src/png.c
+#pngerror.obj: ../libpng/src/pngerror.c
+#pnggccrd.obj: ../libpng/src/pnggccrd.c
+#pngget.obj: ../libpng/src/pngget.c
+#pngmem.obj: ../libpng/src/pngmem.c
+#pngpread.obj: ../libpng/src/pngpread.c
+#pngread.obj: ../libpng/src/pngread.c
+#pngrio.obj: ../libpng/src/pngrio.c
+#pngrtran.obj: ../libpng/src/pngrtran.c
+#pngrutil.obj: ../libpng/src/pngrutil.c
+#pngset.obj: ../libpng/src/pngset.c
+#pngtrans.obj: ../libpng/src/pngtrans.c
+#pngvcrd.obj: ../libpng/src/pngvcrd.c
+#pngwio.obj: ../libpng/src/pngwio.c
+#pngwrite.obj: ../libpng/src/pngwrite.c
+#pngwtran.obj: ../libpng/src/pngwtran.c
+#pngwutil.obj: ../libpng/src/pngwutil.c
+
+clean:
+	${DEL} ../Windows/obj/*.obj
+	${DEL} ../Windows/snes9x.exe
+	${DEL} ../Windows/obj/i386${SLASH}*.obj
+	${DEL} ../Windows/obj/jma${SLASH}*.obj
+	${DEL} ../Windows/obj/unzip${SLASH}*.obj
+	${DEL} ../Windows/obj/win32${SLASH}*.obj
