@@ -197,6 +197,12 @@ wpy_jump(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+// View the program counter and program bank.
+static PyObject*
+wpy_getpc(PyObject *self, PyObject *args) {
+    return Py_BuildValue("I", ((Registers.PB << 16) + Registers.PCw));
+}
+
 // Call a subroutine.
 static PyObject*
 wpy_call(PyObject *self, PyObject *args, PyObject *kws) {
@@ -309,6 +315,8 @@ static PyMethodDef mod_wiggler[] = {
     
     {"jump", wpy_jump, METH_VARARGS,
      "jump(address)\nJumps to an arbitrary address."},
+    {"getpc", wpy_getpc, METH_NOARGS,
+     "getpc() -> address\nReturns the contents of the program counter and bank."},
     {"call", (PyCFunction)wpy_call, METH_VARARGS|METH_KEYWORDS,
      "call(address[, callback])\nJump to a subroutine, and call the callback when it returns.\nUse with care!"},
     {"short_return", wpy_short_return, METH_NOARGS,
